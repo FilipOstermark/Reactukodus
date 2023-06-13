@@ -12,6 +12,21 @@ export interface GridProps {
     setSelectedCellIndex: (idx: number) => void
 }
 
+const GridLineEmphasis: React.FC = () => {
+    return (
+        <>
+        <div className='gridline-emphasis'>
+            <div className='gridline-emphasis-vertical' />
+            <div className='gridline-emphasis-vertical' />
+        </div>
+        <div className='gridline-emphasis flex-direction-column'>
+            <div className='gridline-emphasis-horizontal' />
+            <div className='gridline-emphasis-horizontal' />
+        </div>
+        </>
+    )
+}
+
 const Grid: React.FC<GridProps> = (
     {
         puzzle,
@@ -37,7 +52,12 @@ const Grid: React.FC<GridProps> = (
         )
     }
 
-    return (<div className='sudoku-grid'>{gridCells}</div>)
+    return (
+        <div className='sudoku-grid-wrapper'>
+            <div className='sudoku-grid'>{gridCells}</div>
+            <GridLineEmphasis />
+        </div>
+    )
 }
 
 export default Grid

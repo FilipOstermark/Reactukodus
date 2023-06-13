@@ -1,6 +1,9 @@
 :root {
-  --primary-color: rgb(243, 111, 59);
+  --primary-color: rgb(223, 94, 51);
+  --grid-emphasis-color: rgb(222, 143, 117);
+
   --details-color: whitesmoke;
+  --gridline-emphasis-width: 3px;
 }
 
 :focus { outline: none; }
@@ -36,22 +39,60 @@ p {
   margin: 0;
 }
 
-.sudoku-grid {
+.sudoku-grid-wrapper {
+  position: relative;
+
   width: min(80svw, 50svh);
   height: min(80svw, 50svh);
 
   margin: 0 auto;
   margin-top: 2rem;
+}
 
+.sudoku-grid {
   display: grid;
+
+  width: 100%;
+  height: 100%;
+
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(9, 1fr);
 
   border-radius: 1rem;
-  border: 0.3rem solid var(--details-color);
+  outline: solid 3px var(--details-color);
 
   overflow: hidden;
   background-color: rgb(57, 59, 60);
+}
+
+.gridline-emphasis {
+  position: absolute;
+
+  display: flex;
+  justify-content: space-evenly;
+  pointer-events: none;
+
+  width: 100%;
+  height: 100%;
+
+  top: 0;
+  left: 0;
+}
+
+.flex-direction-column {
+  flex-direction: column;
+}
+
+.gridline-emphasis-vertical {
+  width: var(--gridline-emphasis-width);
+  height: 100%;
+  background-color: var(--grid-emphasis-color);
+}
+
+.gridline-emphasis-horizontal {
+  width: 100%;
+  height: var(--gridline-emphasis-width);
+  background-color: var(--grid-emphasis-color);
 }
 
 .sudoku-grid-cell {
@@ -63,16 +104,6 @@ p {
 
   border-bottom: solid var(--details-color) 1px;
   border-right: solid var(--details-color) 1px;
-}
-
-.sudoku-grid-cell[data-x="2"],
-.sudoku-grid-cell[data-x="5"] {
-  border-right: 0.3rem solid var(--details-color);
-}
-
-.sudoku-grid-cell[data-y="2"],
-.sudoku-grid-cell[data-y="5"] {
-  border-bottom: 0.3rem solid var(--details-color);
 }
 
 .difficulty-selection {
