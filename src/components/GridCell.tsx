@@ -41,6 +41,7 @@ const GridCell: React.FC<GridCellProps> = (
   }
 
   const numberStyleClassName = isLockedCell ? styles.locked : styles.open
+  const highlightStyleClassName = isHighlightShowing ? styles.highlight_showing : styles.highlight_hidden
   return (
     <div
       key={index}
@@ -49,10 +50,9 @@ const GridCell: React.FC<GridCellProps> = (
       data-y={indexY}
       onClick={() => updateSelectedCellIndex(selectedCellIndex, index)}
     >
-      <div className='sudoku-grid-cell-highlight' data-is-selected={isHighlightShowing} />
-      <p 
-        className={numberStyleClassName}
-      >
+      <div className='sudoku-grid-cell-inset-border'></div>
+      <div className={`${styles.highlight} ${highlightStyleClassName}`} />
+      <p className={numberStyleClassName}>
         {displayValue}
       </p>
       <p className={styles.notes}></p>

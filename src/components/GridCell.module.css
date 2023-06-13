@@ -19,3 +19,22 @@
   word-wrap: break-word;
   line-height: 1.1em;
 }
+
+.highlight {
+  position: relative;
+  width: 85%;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  transition: all 75ms ease-out;
+}
+
+.highlight_hidden {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.highlight_showing {  
+  opacity: 1;
+  transform: scale(1);
+}

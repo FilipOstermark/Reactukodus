@@ -75,30 +75,6 @@ p {
   border-bottom: 0.3rem solid var(--details-color);
 }
 
-.sudoku-grid-cell-highlight {
-  position: absolute;
-  width: 80%;
-  height: 80%;
-  
-  display: flex;
-  align-items: center;
-
-  border-radius: 50%;
-  background-color: var(--primary-color);
-
-  opacity: 0;
-  transform: scale(0.8);
-
-  transition: all 75ms ease-out;
-}
-
-.sudoku-grid-cell-highlight[data-is-selected="true"] {
-  opacity: 1;
-  transform: scale(1);
-
-  transition: all 75ms ease-out;
-}
-
 .difficulty-selection {
   display: flex;
   flex-direction: row;
