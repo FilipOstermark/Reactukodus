@@ -12,12 +12,12 @@
 
 .notes {
   position: absolute;
-  width: 50%;
+  width: 3ch;
   bottom: 0.3em;
 
   font-size: 0.85rem;
   word-wrap: break-word;
-  line-height: 1.1em;
+  line-height: 1.2em;
 }
 
 .highlight {

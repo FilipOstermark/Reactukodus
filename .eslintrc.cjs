@@ -10,6 +10,7 @@ module.exports = {
   plugins: ['react-refresh'],
   rules: {
     'react-refresh/only-export-components': 'warn',
-    'semi': [2, 'never']
+    'semi': [2, 'never'],
+    "indent": ["error", 2]
   }
 }

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import './App.css'
 import { getSudoku } from 'sudoku-gen'
 import { Difficulty } from 'sudoku-gen/dist/types/difficulty.type'
 import { Sudoku } from 'sudoku-gen/dist/types/sudoku.type'
 import Grid from './components/Grid'
+import GridCell from './components/GridCell'
 import DifficultySelection from './components/DifficultySelection'
 import NumberSelection from './components/NumberSelection'
 import { CELL_NO_SELECTION_INDEX, CELL_NO_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN, GRID_NUM_CELLS } from './global-constants'
@@ -28,6 +29,8 @@ const App: React.FC = () => {
   const [difficulty, setDifficulty] = useState(sudoku.difficulty)
   const [selectedCellIndex, setSelectedCellIndex] = useState(CELL_NO_SELECTION_INDEX)
   const [highlightedCellValue, setHighlightedCellValue] = useState(CELL_NO_VALUE)
+  const [notes, setNotes] = useState(Array(GRID_NUM_CELLS).fill(""))
+  const [isNotesMode, setIsNotesMode] = useState(false)
 
   useEffect(() => {
     if (validateSolution(sudoku.solution, puzzle)) {
@@ -57,6 +60,21 @@ const App: React.FC = () => {
   }
 
   function setCellValue(index: number, value: string) {
+    if (isNotesMode && puzzle[index] == CELL_NO_VALUE) {
+      setNotes(prevNotes => {
+        const newNotes = [...prevNotes]
+        const cellNotes: string = newNotes[index]
+        if (cellNotes.includes(value)) {
+          newNotes[index] = cellNotes.replace(value, "")
+        } else {
+          newNotes[index] += value
+        }
+        return newNotes
+      })
+
+      return
+    }
+
     const newPuzzle = puzzle.substring(0, index) + value + puzzle.substring(index + 1)
     setPuzzle(newPuzzle)
   }
@@ -88,6 +106,23 @@ const App: React.FC = () => {
     handleValueInput(selectedCellIndex, value)
   }
 
+  const grid: Array<ReactNode> = puzzle.split("").map(
+    (value: string, index: number) => {
+      return GridCell(
+        {
+          index: index,
+          cellValue: value,
+          highlightedCellValue: highlightedCellValue,
+          selectedCellIndex: selectedCellIndex,
+          isLockedCell: isLockedCell(index),
+          notes: notes[index],
+          handleValueInput: handleValueInput,
+          setSelectedCellIndex: setSelectedCellIndex
+        }
+      )
+    }
+  )
+
   return (
     <div className='app-base' tabIndex={0} onKeyDown={(e) => handleKeyDown(e)}>
       <header>
@@ -101,7 +136,8 @@ const App: React.FC = () => {
         selectedCellIndex={selectedCellIndex}
         isLockedCell={isLockedCell}
         handleValueInput={handleValueInput}
-        setSelectedCellIndex={setSelectedCellIndex} />
+        setSelectedCellIndex={setSelectedCellIndex}
+        gridCells={grid} />
       <NumberSelection 
         selectedCellIndex={selectedCellIndex} 
         highlightedCellValue={highlightedCellValue} 

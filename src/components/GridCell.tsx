@@ -1,6 +1,5 @@
-import React from 'react'
 import styles from "./GridCell.module.css"
-import { CELL_NO_SELECTION_INDEX, CELL_NO_VALUE, GRID_SIZE } from '../global-constants'
+import { CELL_NO_SELECTION_INDEX, CELL_NO_VALUE } from '../global-constants'
 
 
 export interface GridCellProps {
@@ -9,28 +8,29 @@ export interface GridCellProps {
   highlightedCellValue: string
   selectedCellIndex: number
   isLockedCell: boolean
+  notes: string
   handleValueInput: (index: number, value: string) => void
   setSelectedCellIndex: (idx: number) => void
 }
 
-const GridCell: React.FC<GridCellProps> = (
+const GridCell = (
   {
     index, 
     cellValue, 
     highlightedCellValue, 
     selectedCellIndex,
     isLockedCell,
+    notes,
     handleValueInput,
     setSelectedCellIndex
   }: GridCellProps
 ) => {
-  const indexX: number = index % GRID_SIZE
-  const indexY: number = Math.floor(index / GRID_SIZE)
   const displayValue: string = cellValue === CELL_NO_VALUE ? "" : cellValue
   const isSelectedCell: boolean = selectedCellIndex == index
   const isHighlightedValue: boolean = highlightedCellValue != CELL_NO_VALUE && (cellValue == highlightedCellValue)
   const isHighlightShowing: boolean = isSelectedCell || isHighlightedValue
-
+  const notesDisplay = notes.split('').sort().join('')
+  
   function updateSelectedCellIndex(currentIndex: number, clickedIndex: number) {
     const newIndex = currentIndex === clickedIndex ? CELL_NO_SELECTION_INDEX : clickedIndex
     if (highlightedCellValue == CELL_NO_VALUE) {
@@ -46,8 +46,6 @@ const GridCell: React.FC<GridCellProps> = (
     <div
       key={index}
       className='sudoku-grid-cell'
-      data-x={indexX}
-      data-y={indexY}
       onClick={() => updateSelectedCellIndex(selectedCellIndex, index)}
     >
       <div className='sudoku-grid-cell-inset-border'></div>
@@ -55,7 +53,7 @@ const GridCell: React.FC<GridCellProps> = (
       <p className={numberStyleClassName}>
         {displayValue}
       </p>
-      <p className={styles.notes}></p>
+      <p className={styles.notes}>{notesDisplay}</p>
     </div>
   )
 }
