@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from 'react'
 import './App.css'
-import { getSudoku } from 'sudoku-gen';
-import { Difficulty } from 'sudoku-gen/dist/types/difficulty.type';
-import { Sudoku } from 'sudoku-gen/dist/types/sudoku.type';
-import Grid from './components/Grid';
+import { getSudoku } from 'sudoku-gen'
+import { Difficulty } from 'sudoku-gen/dist/types/difficulty.type'
+import { Sudoku } from 'sudoku-gen/dist/types/sudoku.type'
+import Grid from './components/Grid'
+import DifficultySelection from './components/DifficultySelection'
+import NumberSelection from './components/NumberSelection'
+import { CELL_NO_SELECTION_INDEX, CELL_NO_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN, GRID_NUM_CELLS } from './global-constants'
 
-var sudoku: Sudoku = getSudoku('easy')
+let sudoku: Sudoku = getSudoku('easy')
 
 function validateSolution(expected: string, actual: string): boolean {
+  console.log(`e: ${expected}\na: ${actual}`)
   return expected === actual
 }
 
 function isLockedCell(index: number): boolean {
-  if (index < 0 || index > 80) {
+  if (index < GRID_CELL_INDEX_MIN || index > GRID_CELL_INDEX_MAX) {
     return true
   }
 
-  return sudoku.puzzle[index] != '-'
+  return sudoku.puzzle[index] != CELL_NO_VALUE
 }
 
-const App: React.FunctionComponent = () => {
+const App: React.FC = () => {
   const [puzzle, setPuzzle] = useState(sudoku.puzzle)
-  const [selectedCellIndex, setSelectedCellIndex] = useState(-1)
-  const [highlightedCellValue, setHighlightedCellValue] = useState("-")
+  const [difficulty, setDifficulty] = useState(sudoku.difficulty)
+  const [selectedCellIndex, setSelectedCellIndex] = useState(CELL_NO_SELECTION_INDEX)
+  const [highlightedCellValue, setHighlightedCellValue] = useState(CELL_NO_VALUE)
+
+  useEffect(() => {
+    if (validateSolution(sudoku.solution, puzzle)) {
+      alert("You solved it, congratulations!")
+    }
+  }, [puzzle])
 
   function resetPuzzle(difficulty: Difficulty) {
     sudoku = getSudoku(difficulty)
@@ -30,11 +41,12 @@ const App: React.FunctionComponent = () => {
     setSelectedCellIndex(-1)
     setHighlightedCellValue('-')
     setPuzzle(sudoku.puzzle)
+    setDifficulty(sudoku.difficulty)
   }
 
   function handleValueInput(index: number, value: string) {
     if (index < 0 || index > 81) {
-      const newHighlightedCellValue = highlightedCellValue == value ? '-' : value
+      const newHighlightedCellValue = highlightedCellValue == value ? CELL_NO_VALUE : value
       setHighlightedCellValue(newHighlightedCellValue)
       return
     } else if (isLockedCell(index)) {
@@ -42,26 +54,37 @@ const App: React.FunctionComponent = () => {
     }
 
     setCellValue(index, value)
-
-    if (validateSolution(sudoku.solution, puzzle)) {
-      alert("You solved it, congratulations!")
-    }
   }
-
-  useEffect(() => {
-    console.log("Rendered!")
-  })
 
   function setCellValue(index: number, value: string) {
     const newPuzzle = puzzle.substring(0, index) + value + puzzle.substring(index + 1)
     setPuzzle(newPuzzle)
   }
 
-  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    const allowedKeys = "123456789"
-    const key = event.key
-    const value = allowedKeys.includes(key) ? key : '-'
+  function wrapCellIndex(index: number): number {
+    if (index < GRID_CELL_INDEX_MIN) return index + GRID_NUM_CELLS
+    else if (index > GRID_CELL_INDEX_MAX) return index - GRID_NUM_CELLS
     
+    return index
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    const allowedCellValueKeys = "123456789"
+    const key = event.key
+    const value = allowedCellValueKeys.includes(key) ? key : CELL_NO_VALUE
+    const arrowKeyModifiers: Map<string, number> = new Map([
+      ['ArrowUp', -9],
+      ['ArrowDown', +9],
+      ['ArrowLeft', -1],
+      ['ArrowRight', +1],
+    ])
+    const modifier: number = arrowKeyModifiers.get(key) ?? 0
+    const newSelectedCellIndex = wrapCellIndex(selectedCellIndex + modifier)
+
+    if (selectedCellIndex != CELL_NO_SELECTION_INDEX) {
+      setSelectedCellIndex(newSelectedCellIndex)
+    }
+
     handleValueInput(selectedCellIndex, value)
   }
 
@@ -69,41 +92,20 @@ const App: React.FunctionComponent = () => {
     <div className='app-base' tabIndex={0} onKeyDown={(e) => handleKeyDown(e)}>
       <header>
         <h1>Sudoku</h1>
-        <div className='difficulty-selection'>
-          <button onClick={
-            () => resetPuzzle('easy')
-            }>Easy</button>
-          <button onClick={
-            () => resetPuzzle('medium')
-            }>Medium</button>
-          <button onClick={
-            () => resetPuzzle('hard')
-            }>Hard</button>
-          <button onClick={
-            () => resetPuzzle('expert')
-            }>Expert</button>
-        </div>
       </header>
-      <div className='sudoku-grid'>
-        <Grid 
-          puzzle={puzzle} 
-          highlightedCellValue={highlightedCellValue}
-          handleValueInput={handleValueInput}
-          selectedCellIndex={selectedCellIndex}
-          setSelectedCellIndex={setSelectedCellIndex} />
-      </div>
-      <div className='number-selection'>
-        <button onClick={() => handleValueInput(selectedCellIndex, "1")}>1</button>
-        <button onClick={() => handleValueInput(selectedCellIndex, "2")}>2</button>
-        <button onClick={() => handleValueInput(selectedCellIndex, "3")}>3</button>
-        <button onClick={() => handleValueInput(selectedCellIndex, "4")}>4</button>
-        <button onClick={() => handleValueInput(selectedCellIndex, "5")}>5</button>
-        <button onClick={() => handleValueInput(selectedCellIndex, "6")}>6</button>
-        <button onClick={() => handleValueInput(selectedCellIndex, "7")}>7</button>
-        <button onClick={() => handleValueInput(selectedCellIndex, "8")}>8</button>
-        <button onClick={() => handleValueInput(selectedCellIndex, "9")}>9</button>
-        <button onClick={() => handleValueInput(selectedCellIndex, "-")}>-</button>
-      </div>
+
+      <DifficultySelection currentDifficulty={difficulty} resetPuzzle={resetPuzzle} />
+      <Grid 
+        puzzle={puzzle} 
+        highlightedCellValue={highlightedCellValue}
+        selectedCellIndex={selectedCellIndex}
+        isLockedCell={isLockedCell}
+        handleValueInput={handleValueInput}
+        setSelectedCellIndex={setSelectedCellIndex} />
+      <NumberSelection 
+        selectedCellIndex={selectedCellIndex} 
+        highlightedCellValue={highlightedCellValue} 
+        handleValueInput={handleValueInput} />
     </div>
   )
 }

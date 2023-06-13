@@ -2,6 +2,7 @@
   --primary-color: rgb(243, 111, 59);
   --details-color: whitesmoke;
 }
+
 :focus { outline: none; }
 
 #root {
@@ -29,13 +30,15 @@ p {
   flex-direction: column;
   justify-content: center;
 
+  width: 100%;
+  min-height: 100%;
+
   margin: 0;
-  height: 100svh;
 }
 
 .sudoku-grid {
-  width: clamp(12rem, min(85svw, 70svh), 40rem);
-  height: clamp(12rem, min(85svw, 70svh), 40rem);
+  width: min(80svw, 50svh);
+  height: min(80svw, 50svh);
 
   margin: 0 auto;
   margin-top: 2rem;
@@ -45,13 +48,14 @@ p {
   grid-template-rows: repeat(9, 1fr);
 
   border-radius: 1rem;
-  border: 0.15rem solid var(--details-color);
+  border: 0.3rem solid var(--details-color);
 
   overflow: hidden;
   background-color: rgb(57, 59, 60);
 }
 
 .sudoku-grid-cell {
+  position: relative;
 
   display: flex;
   justify-content: center;
@@ -63,15 +67,16 @@ p {
 
 .sudoku-grid-cell[data-x="2"],
 .sudoku-grid-cell[data-x="5"] {
-  border-right: 0.2rem solid var(--details-color);
+  border-right: 0.3rem solid var(--details-color);
 }
 
 .sudoku-grid-cell[data-y="2"],
 .sudoku-grid-cell[data-y="5"] {
-  border-bottom: 0.2rem solid var(--details-color);
+  border-bottom: 0.3rem solid var(--details-color);
 }
 
 .sudoku-grid-cell-highlight {
+  position: absolute;
   width: 80%;
   height: 80%;
   
@@ -79,35 +84,44 @@ p {
   align-items: center;
 
   border-radius: 50%;
-  background-color: transparent;
+  background-color: var(--primary-color);
+
+  opacity: 0;
+  transform: scale(0.8);
+
+  transition: all 75ms ease-out;
 }
 
 .sudoku-grid-cell-highlight[data-is-selected="true"] {
-  background-color: var(--primary-color);
-}
+  opacity: 1;
+  transform: scale(1);
 
-.sudoku-grid-cell-number {
-  font-weight: 500;
-  margin: 0 auto;
+  transition: all 75ms ease-out;
 }
 
 .difficulty-selection {
-  margin-top: 3rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 2rem auto 0 auto;
+  max-width: 90svw;
 }
 
-.difficulty-selection * {
+.difficulty-selection * > * {
   min-width: 6rem;
-  margin: 0 0.2rem;
+  margin: 0.2rem;
 }
 
 .number-selection {
   display: flex;
+  flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-
-  margin-top: 2rem;
+  margin: 2rem auto;
+  max-width: 90svw;
 }
 
-.number-selection * {
-  margin: 0 0.15rem;
+.number-selection * > * {
+  margin: 0.15rem;
 }

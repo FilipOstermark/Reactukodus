@@ -1,11 +1,15 @@
 import React from 'react'
+import styles from "./GridCell.module.css"
+import { CELL_NO_SELECTION_INDEX, CELL_NO_VALUE, GRID_SIZE } from '../global-constants'
+
 
 export interface GridCellProps {
   index: number
   cellValue: string
   highlightedCellValue: string
-  handleValueInput: (index: number, value: string) => void
   selectedCellIndex: number
+  isLockedCell: boolean
+  handleValueInput: (index: number, value: string) => void
   setSelectedCellIndex: (idx: number) => void
 }
 
@@ -14,29 +18,29 @@ const GridCell: React.FC<GridCellProps> = (
     index, 
     cellValue, 
     highlightedCellValue, 
-    handleValueInput,
     selectedCellIndex,
+    isLockedCell,
+    handleValueInput,
     setSelectedCellIndex
   }: GridCellProps
 ) => {
-  const indexX: number = index % 9
-  const indexY: number = Math.floor(index / 9)
-  const displayValue: string = cellValue === "-" ? "" : cellValue
+  const indexX: number = index % GRID_SIZE
+  const indexY: number = Math.floor(index / GRID_SIZE)
+  const displayValue: string = cellValue === CELL_NO_VALUE ? "" : cellValue
   const isSelectedCell: boolean = selectedCellIndex == index
-  const isHighlightedValue: boolean = highlightedCellValue != "-" && (cellValue == highlightedCellValue)
+  const isHighlightedValue: boolean = highlightedCellValue != CELL_NO_VALUE && (cellValue == highlightedCellValue)
   const isHighlightShowing: boolean = isSelectedCell || isHighlightedValue
 
   function updateSelectedCellIndex(currentIndex: number, clickedIndex: number) {
-    const newIndex = currentIndex === clickedIndex ? -1 : clickedIndex
-    console.log(`Clicked ${clickedIndex}: ${currentIndex} => ${newIndex}`)
-
-    if (highlightedCellValue == '-') {
+    const newIndex = currentIndex === clickedIndex ? CELL_NO_SELECTION_INDEX : clickedIndex
+    if (highlightedCellValue == CELL_NO_VALUE) {
       setSelectedCellIndex(newIndex)
     } else {
       handleValueInput(clickedIndex, highlightedCellValue)
     }
   }
 
+  const numberStyleClassName = isLockedCell ? styles.locked : styles.open
   return (
     <div
       key={index}
@@ -45,9 +49,13 @@ const GridCell: React.FC<GridCellProps> = (
       data-y={indexY}
       onClick={() => updateSelectedCellIndex(selectedCellIndex, index)}
     >
-      <div className='sudoku-grid-cell-highlight' data-is-selected={isHighlightShowing}>
-        <p className='sudoku-grid-cell-number'>{displayValue}</p>
-      </div>
+      <div className='sudoku-grid-cell-highlight' data-is-selected={isHighlightShowing} />
+      <p 
+        className={numberStyleClassName}
+      >
+        {displayValue}
+      </p>
+      <p className={styles.notes}></p>
     </div>
   )
 }

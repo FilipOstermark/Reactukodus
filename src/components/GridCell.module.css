@@ -1,0 +1,21 @@
+.open {
+  position: absolute;
+  color: whitesmoke;
+  font-weight: 500;
+}
+
+.locked {
+  position: absolute;
+  color: rgba(245, 245, 245, 0.8);
+  font-weight: 400;
+}
+
+.notes {
+  position: absolute;
+  width: 50%;
+  bottom: 0.3em;
+
+  font-size: 0.85rem;
+  word-wrap: break-word;
+  line-height: 1.1em;
+}
