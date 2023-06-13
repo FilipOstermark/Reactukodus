@@ -1,0 +1,113 @@
+:root {
+  --primary-color: rgb(243, 111, 59);
+  --details-color: whitesmoke;
+}
+:focus { outline: none; }
+
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100svw;
+  height: 100svh;
+  text-align: center;
+  box-sizing: border-box;
+
+  justify-content: center;
+  vertical-align: middle;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.app-base {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  margin: 0;
+  height: 100svh;
+}
+
+.sudoku-grid {
+  width: clamp(12rem, min(85svw, 70svh), 40rem);
+  height: clamp(12rem, min(85svw, 70svh), 40rem);
+
+  margin: 0 auto;
+  margin-top: 2rem;
+
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+
+  border-radius: 1rem;
+  border: 0.15rem solid var(--details-color);
+
+  overflow: hidden;
+  background-color: rgb(57, 59, 60);
+}
+
+.sudoku-grid-cell {
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-bottom: solid var(--details-color) 1px;
+  border-right: solid var(--details-color) 1px;
+}
+
+.sudoku-grid-cell[data-x="2"],
+.sudoku-grid-cell[data-x="5"] {
+  border-right: 0.2rem solid var(--details-color);
+}
+
+.sudoku-grid-cell[data-y="2"],
+.sudoku-grid-cell[data-y="5"] {
+  border-bottom: 0.2rem solid var(--details-color);
+}
+
+.sudoku-grid-cell-highlight {
+  width: 80%;
+  height: 80%;
+  
+  display: flex;
+  align-items: center;
+
+  border-radius: 50%;
+  background-color: transparent;
+}
+
+.sudoku-grid-cell-highlight[data-is-selected="true"] {
+  background-color: var(--primary-color);
+}
+
+.sudoku-grid-cell-number {
+  font-weight: 500;
+  margin: 0 auto;
+}
+
+.difficulty-selection {
+  margin-top: 3rem;
+}
+
+.difficulty-selection * {
+  min-width: 6rem;
+  margin: 0 0.2rem;
+}
+
+.number-selection {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  margin-top: 2rem;
+}
+
+.number-selection * {
+  margin: 0 0.15rem;
+}
