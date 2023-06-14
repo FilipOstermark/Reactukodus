@@ -3,7 +3,7 @@
   --grid-emphasis-color: rgb(222, 143, 117);
 
   --details-color: whitesmoke;
-  --grid-default-color: rgba(25, 25, 25, 0.137);
+  --grid-default-color: rgba(25, 25, 25, 0.262);
   --gridline-emphasis-width: 3px;
 }
 
@@ -13,7 +13,7 @@
   margin: 0;
   padding: 0;
   width: 100svw;
-  height: 100svh;
+  min-height: 100svh;
   text-align: center;
   box-sizing: border-box;
 
@@ -35,7 +35,7 @@ p {
   justify-content: center;
 
   width: 100%;
-  min-height: 100%;
+  min-height: 100svh;
 
   margin: 0;
 }
@@ -60,10 +60,11 @@ p {
   grid-template-rows: repeat(9, 1fr);
 
   border-radius: 1rem;
-  outline: solid 2px var(--details-color);
+  outline: solid 1px var(--details-color);
+  box-shadow: 0 0 2rem #00000082;
 
   overflow: hidden;
-  background-color: rgb(57, 59, 60);
+  background-color: rgba(57, 59, 60, 0.75);
 }
 
 .gridline-emphasis {
@@ -117,8 +118,10 @@ p {
 }
 
 .difficulty-selection * > * {
-  min-width: 6rem;
+  min-width: 10ch;
   margin: 0.2rem;
+  border-radius: 2rem;
+  text-transform: lowercase;
 }
 
 .number-selection {
@@ -131,14 +134,17 @@ p {
 }
 
 .number-selection * > * {
-  margin: 0.15rem;
+  margin: 0.1rem;
   aspect-ratio: 1/1;
   border-radius: 50%;
+  text-transform: lowercase;
 }
 
 .utility-button {
   width: fit-content;
-  margin: 0.15rem auto;
+  margin: 0.1rem auto;
+  border-radius: 2rem;
+  text-transform: lowercase;
 }
 
 .utility-button[data-is-notes-mode="true"] {
