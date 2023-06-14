@@ -28,7 +28,8 @@ const GridCell = (
   const displayValue: string = cellValue === CELL_NO_VALUE ? "" : cellValue
   const isSelectedCell: boolean = selectedCellIndex == index
   const isHighlightedValue: boolean = highlightedCellValue != CELL_NO_VALUE && (cellValue == highlightedCellValue)
-  const isHighlightShowing: boolean = isSelectedCell || isHighlightedValue
+  const isHighlightedNote: boolean = highlightedCellValue != CELL_NO_VALUE && (notes.includes(highlightedCellValue))
+  const isHighlightShowing: boolean = isSelectedCell || isHighlightedValue || isHighlightedNote
   const notesDisplay = notes.split('').sort().join('')
   
   function updateSelectedCellIndex(currentIndex: number, clickedIndex: number) {
@@ -40,8 +41,11 @@ const GridCell = (
     }
   }
 
-  const numberStyleClassName = isLockedCell ? styles.locked : styles.open
   const highlightStyleClassName = isHighlightShowing ? styles.highlight_showing : styles.highlight_hidden
+
+  const defaultNumberStyle = isLockedCell ? styles.locked : styles.open
+  const highlightNumberStyle = isHighlightShowing ? styles.highlighted : ""
+  const combinedNumberStyle = [defaultNumberStyle, highlightNumberStyle].join(" ")
   return (
     <div
       key={index}
@@ -50,7 +54,7 @@ const GridCell = (
     >
       <div className='sudoku-grid-cell-inset-border'></div>
       <div className={`${styles.highlight} ${highlightStyleClassName}`} />
-      <p className={numberStyleClassName}>
+      <p className={combinedNumberStyle}>
         {displayValue}
       </p>
       <p className={styles.notes}>{notesDisplay}</p>

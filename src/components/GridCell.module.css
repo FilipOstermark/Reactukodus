@@ -1,32 +1,38 @@
 .open {
   position: absolute;
   color: whitesmoke;
+  font-size: 1.5rem;
   font-weight: 500;
+  pointer-events: none;
+  user-select: none;
 }
 
 .locked {
   position: absolute;
   color: rgba(245, 245, 245, 0.8);
+  font-size: 1.5rem;
   font-weight: 400;
+  pointer-events: none;
+  user-select: none;
 }
 
 .notes {
   position: absolute;
-  width: 3ch;
-  bottom: 0.3em;
+  max-width: 3ch;
+  bottom: 0.2em;
 
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   word-wrap: break-word;
-  line-height: 1.2em;
+  line-height: 1.05em;
 }
 
 .highlight {
   position: relative;
-  width: 85%;
+  width: 80%;
   aspect-ratio: 1/1;
   border-radius: 50%;
   background-color: var(--primary-color);
-  transition: all 75ms ease-out;
+  transition: all 150ms;
 }
 
 .highlight_hidden {

@@ -3,6 +3,7 @@
   --grid-emphasis-color: rgb(222, 143, 117);
 
   --details-color: whitesmoke;
+  --grid-default-color: rgba(25, 25, 25, 0.137);
   --gridline-emphasis-width: 3px;
 }
 
@@ -42,11 +43,11 @@ p {
 .sudoku-grid-wrapper {
   position: relative;
 
-  width: min(80svw, 50svh);
-  height: min(80svw, 50svh);
+  width: min(90svw, 50svh);
+  height: min(90svw, 50svh);
 
   margin: 0 auto;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .sudoku-grid {
@@ -59,7 +60,7 @@ p {
   grid-template-rows: repeat(9, 1fr);
 
   border-radius: 1rem;
-  outline: solid 3px var(--details-color);
+  outline: solid 2px var(--details-color);
 
   overflow: hidden;
   background-color: rgb(57, 59, 60);
@@ -102,8 +103,8 @@ p {
   justify-content: center;
   align-items: center;
 
-  border-bottom: solid var(--details-color) 1px;
-  border-right: solid var(--details-color) 1px;
+  border-bottom: solid var(--grid-default-color) 1px;
+  border-right: solid var(--grid-default-color) 1px;
 }
 
 .difficulty-selection {
@@ -111,7 +112,7 @@ p {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 2rem auto 0 auto;
+  margin: 1rem auto 0 auto;
   max-width: 90svw;
 }
 
@@ -125,10 +126,21 @@ p {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  margin: 2rem auto;
+  margin: 1rem auto 0 auto;
   max-width: 90svw;
 }
 
 .number-selection * > * {
   margin: 0.15rem;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+}
+
+.utility-button {
+  width: fit-content;
+  margin: 0.15rem auto;
+}
+
+.utility-button[data-is-notes-mode="true"] {
+  background-color: var(--primary-color);
 }
