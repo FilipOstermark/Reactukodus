@@ -46,16 +46,25 @@ p {
   width: min(90svw, 50svh);
   height: min(90svw, 50svh);
 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   margin: 0 auto;
   margin-top: 1rem;
+
+  background-color: rgb(43, 59, 49);
+  border-radius: 1rem;
 }
 
 .sudoku-grid {
-  display: grid;
+  position: absolute;
+  top: 0;
 
   width: 100%;
   height: 100%;
-
+  
+  display: grid;
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(9, 1fr);
 
@@ -64,7 +73,7 @@ p {
   box-shadow: 0 0 2rem #00000082;
 
   overflow: hidden;
-  background-color: rgba(57, 59, 60, 0.75);
+  background-color: rgb(57, 59, 60);
 }
 
 .gridline-emphasis {

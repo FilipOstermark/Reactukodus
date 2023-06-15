@@ -1,5 +1,5 @@
 import styles from "./GridCell.module.css"
-import { CELL_NO_SELECTION_INDEX, CELL_NO_VALUE } from '../global-constants'
+import { CELL_NO_SELECTION_INDEX, CELL_NO_VALUE } from '../../core/common/global-constants'
 
 
 export interface GridCellProps {

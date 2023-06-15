@@ -5,3 +5,5 @@ export const GRID_NUM_CELLS = GRID_SIZE * GRID_SIZE
 
 export const CELL_NO_SELECTION_INDEX = -1
 export const CELL_NO_VALUE = "-"
+
+export const ALLOWED_CELL_VALUES = "123456789"

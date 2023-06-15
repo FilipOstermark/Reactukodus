@@ -17,6 +17,7 @@ const Grid = (
 ) => {
   return (
     <div className='sudoku-grid-wrapper'>
+      <h1>Solved</h1>
       <div className='sudoku-grid'>{gridCells}</div>
       <GridLineEmphasis />
     </div>

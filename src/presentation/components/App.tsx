@@ -3,11 +3,13 @@ import './App.css'
 import { getSudoku } from 'sudoku-gen'
 import { Difficulty } from 'sudoku-gen/dist/types/difficulty.type'
 import { Sudoku } from 'sudoku-gen/dist/types/sudoku.type'
-import Grid from './components/Grid'
-import GridCell from './components/GridCell'
-import DifficultySelection from './components/DifficultySelection'
-import NumberSelection from './components/NumberSelection'
-import { CELL_NO_SELECTION_INDEX, CELL_NO_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN, GRID_NUM_CELLS } from './global-constants'
+import Grid from './Grid'
+import GridCell from './GridCell'
+import DifficultySelection from './DifficultySelection'
+import NumberSelection from './NumberSelection'
+import { ALLOWED_CELL_VALUES, CELL_NO_SELECTION_INDEX, CELL_NO_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN, GRID_NUM_CELLS } from '../../core/common/global-constants'
+import { clearIntersectingNotesOnInput } from '../../core/common/utils-sudoku'
+import highscoreRepository from '../../data/HighscoreRepository'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -27,6 +29,7 @@ function isLockedCell(index: number): boolean {
 function toDisplayTime(num: number): string {
   return new String(num).padStart(2, '0')
 }
+
 
 const App: React.FC = () => {
   const [puzzle, setPuzzle] = useState(sudoku.puzzle)
@@ -58,7 +61,10 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (validateSolution(sudoku.solution, puzzle)) {
-      alert("You solved it, congratulations!")
+      highscoreRepository.addScore(displayStopwatch, difficulty)
+      const displayHighscore = highscoreRepository.getHighscore()[difficulty].join("\n")
+
+      alert(`You solved it, congratulations!\nCurrent highscore:\n${displayHighscore}`)
     }
   }, [puzzle])
 
@@ -103,7 +109,7 @@ const App: React.FC = () => {
     }
 
     setNotes(prevNotes => {
-      const newNotes = [...prevNotes]
+      const newNotes = clearIntersectingNotesOnInput(index, value, prevNotes)
       newNotes[index] = ""
       return newNotes
     })
@@ -120,9 +126,8 @@ const App: React.FC = () => {
   }
 
   function handleKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
-    const allowedCellValueKeys = "123456789"
     const key = event.key
-    const value = allowedCellValueKeys.includes(key) ? key : CELL_NO_VALUE
+    const value = ALLOWED_CELL_VALUES.includes(key) ? key : CELL_NO_VALUE
     const arrowKeyModifiers: Map<string, number> = new Map([
       ['ArrowUp', -9],
       ['ArrowDown', +9],
