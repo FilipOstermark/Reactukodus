@@ -30,13 +30,104 @@ function toDisplayTime(num: number): string {
   return new String(num).padStart(2, '0')
 }
 
+class SudokuState {
+
+  readonly puzzle: string
+  readonly solution: string
+  readonly difficulty: 'easy'|'medium'|'hard'|'expert'
+  readonly notes: Array<string>
+  readonly selectedCellIndex: number
+  readonly highlightedCellValue: string
+
+  constructor(
+    puzzle: string, 
+    solution: string, 
+    difficulty: 'easy'|'medium'|'hard'|'expert',
+    notes: Array<string> = Array(GRID_NUM_CELLS).fill(""),
+    selectedCellIndex = -1,
+    highlightedCellValue = '-'
+  ) {
+    this.puzzle = puzzle
+    this.solution = solution
+    this.difficulty = difficulty
+    this.notes = notes
+    this.selectedCellIndex = selectedCellIndex
+    this.highlightedCellValue = highlightedCellValue
+  }
+
+  public handleCellInput(index: number, value: string, isNote: boolean): SudokuState {
+    if (index < GRID_CELL_INDEX_MIN || index > GRID_CELL_INDEX_MAX) {
+      const newHighlightedCellValue = 
+        this.highlightedCellValue == value ? CELL_NO_VALUE : value
+      return new SudokuState(
+        this.puzzle,
+        this.solution,
+        this.difficulty,
+        this.notes,
+        this.selectedCellIndex,
+        newHighlightedCellValue
+      )
+    } else if (isLockedCell(index)) {
+      return {...this}
+    }
+
+    if (isNote && this.puzzle[index] == CELL_NO_VALUE) {
+      const newNotes = [...this.notes]
+      const cellNotes: string = newNotes[index]
+      if (cellNotes.includes(value)) {
+        newNotes[index] = cellNotes.replace(value, "")
+      } else {
+        newNotes[index] += value
+      }
+
+      return new SudokuState(
+        this.puzzle,
+        this.solution,
+        this.difficulty,
+        newNotes,
+        this.selectedCellIndex,
+        this.highlightedCellValue
+      )
+    }
+
+    const newNotes = clearIntersectingNotesOnInput(index, value, this.notes)
+    newNotes[index] = ""
+
+    const newPuzzle = this.puzzle.substring(0, index) + value + this.puzzle.substring(index + 1)
+    
+    return new SudokuState(
+      newPuzzle,
+      this.solution,
+      this.difficulty,
+      newNotes,
+      this.selectedCellIndex,
+      this.highlightedCellValue
+    )
+  }
+
+  public updateSelectedIndex(newSelectedCellIndex: number): SudokuState {
+    return new SudokuState(
+      this.puzzle,
+      this.solution,
+      this.difficulty,
+      this.notes,
+      newSelectedCellIndex,
+      this.highlightedCellValue
+    )
+  }
+}
 
 const App: React.FC = () => {
-  const [puzzle, setPuzzle] = useState(sudoku.puzzle)
+  /*const [puzzle, setPuzzle] = useState(sudoku.puzzle)
   const [difficulty, setDifficulty] = useState(sudoku.difficulty)
   const [selectedCellIndex, setSelectedCellIndex] = useState(CELL_NO_SELECTION_INDEX)
   const [highlightedCellValue, setHighlightedCellValue] = useState(CELL_NO_VALUE)
-  const [notes, setNotes] = useState(Array(GRID_NUM_CELLS).fill(""))
+  const [notes, setNotes] = useState(Array(GRID_NUM_CELLS).fill(""))*/
+  
+  const [sudokuState, setSudokuState] = useState(
+    new SudokuState(sudoku.puzzle, sudoku.solution, sudoku.difficulty)
+  )
+
   const [isNotesMode, setIsNotesMode] = useState(false)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
 
@@ -60,62 +151,28 @@ const App: React.FC = () => {
   }, [elapsedSeconds])
 
   useEffect(() => {
-    if (validateSolution(sudoku.solution, puzzle)) {
-      highscoreRepository.addScore(displayStopwatch, difficulty)
-      const displayHighscore = highscoreRepository.getHighscore()[difficulty].join("\n")
+    if (validateSolution(sudokuState.solution, sudokuState.puzzle)) {
+      highscoreRepository.addScore(displayStopwatch, sudokuState.difficulty)
+      const displayHighscore = 
+        highscoreRepository.getHighscore()[sudokuState.difficulty].join("\n")
 
       alert(`You solved it, congratulations!\nCurrent highscore:\n${displayHighscore}`)
     }
-  }, [puzzle])
+  }, [sudokuState, displayStopwatch])
 
-  function resetPuzzle(difficulty: Difficulty) {
+  function resetGame(difficulty: Difficulty) {
     sudoku = getSudoku(difficulty)
 
     setElapsedSeconds(0)
     setIsNotesMode(false)
-    setNotes(Array(GRID_NUM_CELLS).fill(""))
-    setSelectedCellIndex(-1)
-    setHighlightedCellValue('-')
-    setPuzzle(sudoku.puzzle)
-    setDifficulty(sudoku.difficulty)
-  }
 
-  function handleValueInput(index: number, value: string) {
-    if (index < 0 || index > 81) {
-      const newHighlightedCellValue = highlightedCellValue == value ? CELL_NO_VALUE : value
-      setHighlightedCellValue(newHighlightedCellValue)
-      return
-    } else if (isLockedCell(index)) {
-      return
-    }
-
-    setCellValue(index, value)
-  }
-
-  function setCellValue(index: number, value: string) {
-    if (isNotesMode && puzzle[index] == CELL_NO_VALUE) {
-      setNotes(prevNotes => {
-        const newNotes = [...prevNotes]
-        const cellNotes: string = newNotes[index]
-        if (cellNotes.includes(value)) {
-          newNotes[index] = cellNotes.replace(value, "")
-        } else {
-          newNotes[index] += value
-        }
-        return newNotes
-      })
-
-      return
-    }
-
-    setNotes(prevNotes => {
-      const newNotes = clearIntersectingNotesOnInput(index, value, prevNotes)
-      newNotes[index] = ""
-      return newNotes
-    })
-
-    const newPuzzle = puzzle.substring(0, index) + value + puzzle.substring(index + 1)
-    setPuzzle(newPuzzle)
+    setSudokuState(
+      new SudokuState(
+        sudoku.puzzle,
+        sudoku.solution,
+        sudoku.difficulty
+      )
+    )
   }
 
   function wrapCellIndex(index: number): number {
@@ -134,17 +191,26 @@ const App: React.FC = () => {
       ['ArrowLeft', -1],
       ['ArrowRight', +1],
     ])
-    if (arrowKeyModifiers.has(event.key) && selectedCellIndex != CELL_NO_SELECTION_INDEX) {
-      setSelectedCellIndex(prevSelectedCellIndex => {
-        const modifier: number = arrowKeyModifiers.get(key) ?? 0
-        const newSelectedCellIndex = wrapCellIndex(prevSelectedCellIndex + modifier)  
-        return newSelectedCellIndex
+    if (
+      arrowKeyModifiers.has(event.key) && 
+      sudokuState.selectedCellIndex != CELL_NO_SELECTION_INDEX
+    ) {
+      setSudokuState(prev => {
+        const modifer: number = arrowKeyModifiers.get(key) ?? 0
+        const newSelectedCellIndex = wrapCellIndex(prev.selectedCellIndex + modifer)  
+        return prev.updateSelectedIndex(newSelectedCellIndex)
       })
 
       return
     }
-  
-    handleValueInput(selectedCellIndex, value)
+
+    setSudokuState(prev => {
+      return prev.handleCellInput(
+        prev.selectedCellIndex,
+        value,
+        isNotesMode
+      )
+    })
   }
 
   function handleNotesButtonClick() {
@@ -153,18 +219,28 @@ const App: React.FC = () => {
     })
   }
 
-  const grid: Array<ReactNode> = puzzle.split("").map(
+  const grid: Array<ReactNode> = sudokuState.puzzle.split("").map(
     (value: string, index: number) => {
       return GridCell(
         {
           index: index,
           cellValue: value,
-          highlightedCellValue: highlightedCellValue,
-          selectedCellIndex: selectedCellIndex,
+          highlightedCellValue: sudokuState.highlightedCellValue,
+          selectedCellIndex: sudokuState.selectedCellIndex,
           isLockedCell: isLockedCell(index),
-          notes: notes[index],
-          handleValueInput: handleValueInput,
-          setSelectedCellIndex: setSelectedCellIndex
+          notes: sudokuState.notes[index],
+          handleValueInput: (index: number, value: string) => {
+            setSudokuState(prev => {
+              return prev.handleCellInput(
+                index, value, isNotesMode
+              )
+            })
+          },
+          setSelectedCellIndex: (index: number) => {
+            setSudokuState(prev => {
+              return prev.updateSelectedIndex(index)
+            })
+          }
         }
       )
     }
@@ -172,20 +248,21 @@ const App: React.FC = () => {
 
   return (
     <div className='app-base' tabIndex={0} onKeyDown={(e) => handleKeyDown(e)}>
-      <DifficultySelection currentDifficulty={difficulty} resetPuzzle={resetPuzzle} />
-      <Grid 
-        puzzle={puzzle} 
-        highlightedCellValue={highlightedCellValue}
-        selectedCellIndex={selectedCellIndex}
-        isLockedCell={isLockedCell}
-        handleValueInput={handleValueInput}
-        setSelectedCellIndex={setSelectedCellIndex}
-        gridCells={grid} />
+      <DifficultySelection
+        currentDifficulty={sudokuState.difficulty} 
+        resetPuzzle={resetGame} />
+      <Grid gridCells={grid} />
       <h3>{displayStopwatch}</h3>
       <NumberSelection 
-        selectedCellIndex={selectedCellIndex} 
-        highlightedCellValue={highlightedCellValue} 
-        handleValueInput={handleValueInput} />
+        selectedCellIndex={sudokuState.selectedCellIndex} 
+        highlightedCellValue={sudokuState.highlightedCellValue} 
+        handleValueInput={(index: number, value: string) => {
+          setSudokuState(prev => {
+            return prev.handleCellInput(
+              index, value, isNotesMode
+            )
+          })
+        }} />
       <button 
         className='utility-button' 
         onClick={handleNotesButtonClick}

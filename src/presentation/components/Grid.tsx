@@ -3,12 +3,6 @@ import GridLineEmphasis from "./GridLineEmphasis"
 
 
 export interface GridProps {
-  puzzle: string
-  highlightedCellValue: string
-  selectedCellIndex: number
-  isLockedCell: (index: number) => boolean
-  handleValueInput: (index: number, value: string) => void
-  setSelectedCellIndex: (idx: number) => void,
   gridCells: Array<ReactNode>
 }
 
