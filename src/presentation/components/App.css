@@ -149,9 +149,14 @@ p {
   text-transform: lowercase;
 }
 
+.utility-buttons {
+  display: flex;
+  margin: 0 auto;
+}
+
 .utility-button {
   width: fit-content;
-  margin: 0.1rem auto;
+  margin: 0.1rem;
   border-radius: 2rem;
   text-transform: lowercase;
 }

@@ -1,5 +1,13 @@
-import { GRID_NUM_CELLS, GRID_SIZE } from "./global-constants"
+import { GRID_NUM_CELLS, GRID_SIZE, GRID_CELL_INDEX_MIN, GRID_CELL_INDEX_MAX, CELL_NO_VALUE } from "./global-constants"
 import { range } from "./utils-common"
+
+export function isLockedCell(index: number, originalPuzzle: string): boolean {
+  if (index < GRID_CELL_INDEX_MIN || index > GRID_CELL_INDEX_MAX) {
+    return true
+  }
+
+  return originalPuzzle[index] != CELL_NO_VALUE
+}
 
 function getRow(index: number): number {
   return Math.floor(index / 9)
@@ -94,4 +102,8 @@ export function clearIntersectingNotesOnInput(
     })
 
   return notesCopy
+}
+
+export function validateSolution(expected: string, actual: string): boolean {
+  return expected === actual
 }
