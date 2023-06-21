@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import './App.css'
 import { getSudoku } from 'sudoku-gen'
 import { Difficulty } from 'sudoku-gen/dist/types/difficulty.type'
@@ -179,11 +179,6 @@ const App: React.FC = () => {
 
     return (<Grid gridCells={gridCells} highscoreView={highscoreComponent} />)
   }
-
-  /*const gridComponent = useMemo(
-    gridFactory, 
-    [highlightedCellValue, selectedCellIndex, sudokuState, isNotesMode, highscore, isSolved, forceUpdate]
-  )*/
 
   const gridComponent = gridFactory()
 
