@@ -14,7 +14,6 @@ import { isLockedCell, validateSolution } from '../../core/common/utils-sudoku'
 import { toDisplayTime } from '../../core/common/utils-common'
 
 let sudoku: Sudoku = getSudoku('easy')
-let sudokuStateHistory: SudokuState[] = []
 
 const App: React.FC = () => {
   const [sudokuState, setSudokuState] = useState(
@@ -56,17 +55,19 @@ const App: React.FC = () => {
       const displayHighscore = 
         highscoreRepository.getHighscore()[sudokuState.difficulty].join("\n")
 
-      alert(`You solved it, congratulations!\nCurrent highscore:\n${displayHighscore}`)
+      alert(`SOLVED!\nCurrent highscore (${sudokuState.difficulty}):\n${displayHighscore}`)
     }
   }, [sudokuState])
+
+  
 
   function resetGame(difficulty: Difficulty) {
     sudoku = getSudoku(difficulty)
 
     setElapsedSeconds(0)
     setIsNotesMode(false)
+    setHighlightedCellValue(CELL_NO_VALUE)
 
-    sudokuStateHistory = []
     setSudokuState(
       new SudokuState(
         sudoku.puzzle,
@@ -119,7 +120,6 @@ const App: React.FC = () => {
     }
 
     setSudokuState(prev => {
-      sudokuStateHistory.push(prev)
       return updateSudokuState(prev, selectedCellIndex, value, isNotesMode)
     })
   }
@@ -131,18 +131,14 @@ const App: React.FC = () => {
   }
 
   function handleUndoButtonClick() {
-    if (sudokuStateHistory.length === 0) {
-      return
-    }
-
-    const prevState = sudokuStateHistory.pop()
+    const prevState = sudokuState.previousState
     if (prevState !== undefined) {
       setSudokuState(prevState)
     }
   }
 
   const gridComponent = useMemo(() => {
-    const gridCells: Array<ReactNode> = sudokuState.puzzle.split("").map(
+    const gridCells: Array<ReactNode> = sudokuState.puzzle.split('').map(
       (value: string, index: number) => {
         return GridCell(
           {
@@ -154,7 +150,6 @@ const App: React.FC = () => {
             notes: sudokuState.notes[index],
             handleValueInput: (index: number, value: string) => {
               setSudokuState(prev => {
-                sudokuStateHistory.push(prev)
                 return updateSudokuState(prev, index, value, isNotesMode)
               })
             },
@@ -168,7 +163,7 @@ const App: React.FC = () => {
   }, [highlightedCellValue, selectedCellIndex, sudokuState, isNotesMode])
 
   return (
-    <div className='app-base' tabIndex={0} onKeyDown={(e) => handleKeyDown(e)}>
+    <div className='app-base' tabIndex={0} onKeyDown={e => handleKeyDown(e)}>
       <DifficultySelection
         currentDifficulty={sudokuState.difficulty} 
         resetPuzzle={resetGame} />
@@ -188,7 +183,6 @@ const App: React.FC = () => {
           }
 
           setSudokuState(prev => {
-            sudokuStateHistory.push(prev)
             return updateSudokuState(
               prev, index, value, isNotesMode
             )
