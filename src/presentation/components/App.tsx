@@ -57,6 +57,7 @@ const App: React.FC = () => {
 
       alert(`SOLVED!\nCurrent highscore (${sudokuState.difficulty}):\n${displayHighscore}`)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sudokuState])
 
   
