@@ -3,7 +3,12 @@ import { isStrictEqualArray } from "../core/common/utils-common"
 import { clearIntersectingNotesOnInput } from "../core/common/utils-sudoku"
 import { isLockedCell } from "../core/common/utils-sudoku"
 
-export function updateSudokuState(currentState: SudokuState, index: number, value: string, isNote: boolean): SudokuState {
+export function updateSudokuState(
+  currentState: SudokuState, 
+  index: number, 
+  value: string, 
+  isNote: boolean
+): SudokuState {
   if (
     index < GRID_CELL_INDEX_MIN || 
     index > GRID_CELL_INDEX_MAX || 

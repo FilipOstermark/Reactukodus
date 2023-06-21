@@ -12,6 +12,7 @@ import highscoreRepository from '../../data/HighscoreRepository'
 import { SudokuState, updateSudokuState } from '../../domain/SudokuState'
 import { isLockedCell, validateSolution } from '../../core/common/utils-sudoku'
 import { toDisplayTime } from '../../core/common/utils-common'
+import { HighscoreView } from './HighScore'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -25,10 +26,12 @@ const App: React.FC = () => {
     )
   )
 
-  const [selectedCellIndex, setSelectedCellIndex] = useState(-1)
+  const [selectedCellIndex, setSelectedCellIndex] = useState(CELL_NO_SELECTION_INDEX)
   const [highlightedCellValue, setHighlightedCellValue] = useState(CELL_NO_VALUE)
   const [isNotesMode, setIsNotesMode] = useState(false)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
+  const [highscore, setHighscore] = useState(highscoreRepository.getHighscore())
+  const [isSolved, setIsSolved] = useState(false)
 
   const displaySeconds = toDisplayTime(elapsedSeconds % 60)
   const displayMinutes = toDisplayTime(Math.floor(elapsedSeconds / 60) % 60)
@@ -39,6 +42,10 @@ const App: React.FC = () => {
       () => {
         return setElapsedSeconds(
           prevElapsedSeconds => {
+            if (validateSolution(sudokuState.solution, sudokuState.puzzle)) {
+              return prevElapsedSeconds
+            }
+
             return prevElapsedSeconds + 1
           }
         )
@@ -47,20 +54,17 @@ const App: React.FC = () => {
     )
 
     return () => { clearInterval(intervalId) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [elapsedSeconds])
 
   useEffect(() => {
     if (validateSolution(sudokuState.solution, sudokuState.puzzle)) {
       highscoreRepository.addScore(displayStopwatch, sudokuState.difficulty)
-      const displayHighscore = 
-        highscoreRepository.getHighscore()[sudokuState.difficulty].join("\n")
-
-      alert(`SOLVED!\nCurrent highscore (${sudokuState.difficulty}):\n${displayHighscore}`)
+      setHighscore(highscoreRepository.getHighscore())
+      setIsSolved(true)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sudokuState])
-
-  
 
   function resetGame(difficulty: Difficulty) {
     sudoku = getSudoku(difficulty)
@@ -68,6 +72,7 @@ const App: React.FC = () => {
     setElapsedSeconds(0)
     setIsNotesMode(false)
     setHighlightedCellValue(CELL_NO_VALUE)
+    setIsSolved(false)
 
     setSudokuState(
       new SudokuState(
@@ -97,7 +102,7 @@ const App: React.FC = () => {
       ['ArrowRight', +1],
     ])
 
-    if (selectedCellIndex === -1 && isNumeric) {
+    if (selectedCellIndex === CELL_NO_SELECTION_INDEX && isNumeric) {
       setHighlightedCellValue(prev => {
         if (prev === value) {
           return CELL_NO_VALUE
@@ -138,6 +143,13 @@ const App: React.FC = () => {
     }
   }
 
+  const highscoreComponent = (
+    <HighscoreView 
+      highscore={highscore} 
+      difficulty={sudokuState.difficulty}
+      isSolved={isSolved} />
+  )
+
   const gridComponent = useMemo(() => {
     const gridCells: Array<ReactNode> = sudokuState.puzzle.split('').map(
       (value: string, index: number) => {
@@ -149,6 +161,7 @@ const App: React.FC = () => {
             selectedCellIndex: selectedCellIndex,
             isLockedCell: isLockedCell(index, sudokuState.originalPuzzle),
             notes: sudokuState.notes[index],
+            isSolved: validateSolution(sudokuState.solution, sudokuState.puzzle),
             handleValueInput: (index: number, value: string) => {
               setSudokuState(prev => {
                 return updateSudokuState(prev, index, value, isNotesMode)
@@ -160,8 +173,10 @@ const App: React.FC = () => {
       }
     )
 
-    return (<Grid gridCells={gridCells} />)
-  }, [highlightedCellValue, selectedCellIndex, sudokuState, isNotesMode])
+    return (<Grid gridCells={gridCells} highscoreView={highscoreComponent} />)
+  }, [highlightedCellValue, selectedCellIndex, sudokuState, isNotesMode, highscore, isSolved])
+
+  const stopwatchOpacity = isSolved ? 0 : 1
 
   return (
     <div className='app-base' tabIndex={0} onKeyDown={e => handleKeyDown(e)}>
@@ -169,7 +184,7 @@ const App: React.FC = () => {
         currentDifficulty={sudokuState.difficulty} 
         resetPuzzle={resetGame} />
       {gridComponent}
-      <h3>{displayStopwatch}</h3>
+      <h3 style={{opacity: stopwatchOpacity}}>{displayStopwatch}</h3>
       <NumberSelection 
         selectedCellIndex={selectedCellIndex} 
         highlightedCellValue={highlightedCellValue} 

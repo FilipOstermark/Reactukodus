@@ -8,7 +8,8 @@ export interface GridCellProps {
   highlightedCellValue: string
   selectedCellIndex: number
   isLockedCell: boolean
-  notes: string
+  notes: string,
+  isSolved: boolean,
   handleValueInput: (index: number, value: string) => void
   setSelectedCellIndex: (idx: number) => void
 }
@@ -21,6 +22,7 @@ const GridCell = (
     selectedCellIndex,
     isLockedCell,
     notes,
+    isSolved,
     handleValueInput,
     setSelectedCellIndex
   }: GridCellProps
@@ -41,20 +43,21 @@ const GridCell = (
     }
   }
 
-  const highlightStyleClassName = isHighlightShowing ? styles.highlight_showing : styles.highlight_hidden
-
+  const highlightStyleClassName = isHighlightShowing ? styles["highlight-showing"] : styles["highlight-hidden"]
   const defaultNumberStyle = isLockedCell ? styles.locked : styles.open
-  const highlightNumberStyle = isHighlightShowing ? styles.highlighted : ""
-  const combinedNumberStyle = [defaultNumberStyle, highlightNumberStyle].join(" ")
+  const gridCellStyle = isSolved ? styles["sudoku-grid-cell-solved"] : styles["sudoku-grid-cell"]
+  const transitionDuration = Math.round(Math.random() * 500) + "ms"
+
   return (
     <div
       key={index}
-      className='sudoku-grid-cell'
+      className={gridCellStyle}
+      style={{transitionDelay: transitionDuration, transitionDuration: transitionDuration}}
       onClick={() => updateSelectedCellIndex(selectedCellIndex, index)}
     >
       <div className='sudoku-grid-cell-inset-border'></div>
-      <div className={`${styles.highlight} ${highlightStyleClassName}`} />
-      <p className={combinedNumberStyle}>
+      <div className={`${highlightStyleClassName}`} />
+      <p className={defaultNumberStyle}>
         {displayValue}
       </p>
       <p className={styles.notes}>{notesDisplay}</p>

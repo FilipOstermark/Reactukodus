@@ -1,6 +1,6 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
 
-interface Highscore {
+export interface Highscore {
   easy: Array<string>
   medium: Array<string>
   hard: Array<string>

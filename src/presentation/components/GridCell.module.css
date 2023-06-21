@@ -1,19 +1,22 @@
-.open {
+.number {
   position: absolute;
-  color: whitesmoke;
   font-size: 1.5rem;
-  font-weight: 500;
   pointer-events: none;
   user-select: none;
 }
 
+.open {
+  composes: number;
+
+  color: whitesmoke;
+  font-weight: 500;
+}
+
 .locked {
-  position: absolute;
+  composes: number;
+
   color: rgba(245, 245, 245, 0.8);
-  font-size: 1.5rem;
   font-weight: 400;
-  pointer-events: none;
-  user-select: none;
 }
 
 .notes {
@@ -35,12 +38,36 @@
   transition: all 150ms;
 }
 
-.highlight_hidden {
+.highlight-hidden {
+  composes: highlight;
+
   opacity: 0;
   transform: scale(0.8);
 }
 
-.highlight_showing {  
+.highlight-showing {  
+  composes: highlight;
+  
   opacity: 1;
   transform: scale(1);
+}
+
+.sudoku-grid-cell {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-bottom: solid var(--grid-default-color) 1px;
+  border-right: solid var(--grid-default-color) 1px;
+
+  transition: opacity 500ms ease-out;
+}
+
+.sudoku-grid-cell-solved {
+  composes: sudoku-grid-cell;
+
+  transition: opacity 500ms ease-out;
+  opacity: 0;
 }
