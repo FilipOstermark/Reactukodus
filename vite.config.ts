@@ -19,19 +19,19 @@ const pwaPlugin = VitePWA({
     description: "A simple sudoku app",
     icons: [
       {
-        src: "/logo128.png",
+        src: "/Reactukodus/logo128.png",
         sizes: "128x128",
         type: "image/png",
         purpose: "any"
       },
       {
-        src: "/logo256.png",
+        src: "/Reactukodus/logo256.png",
         sizes: "256x256",
         type: "image/png",
         purpose: "any"
       },
       {
-        src: "/logo512.png",
+        src: "/Reactukodus/logo512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "any maskable"
