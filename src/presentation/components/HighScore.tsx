@@ -17,7 +17,7 @@ export const HighscoreView = (
   const style = isSolved ? 'highscore-showing' : 'highscore'
   const scoreList = highscore[difficulty].map(
     (value: string, index: number) => {
-      return (<p key={index}><b>{index}.</b> {value}</p>)
+      return (<p key={index}><b>{index + 1}.</b> {value}</p>)
     }
   )
 

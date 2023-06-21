@@ -32,6 +32,7 @@ const App: React.FC = () => {
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [highscore, setHighscore] = useState(highscoreRepository.getHighscore())
   const [isSolved, setIsSolved] = useState(false)
+  const [triggerPopinAnimation, setTriggerPopinAnimation] = useState(0)
 
   const displaySeconds = toDisplayTime(elapsedSeconds % 60)
   const displayMinutes = toDisplayTime(Math.floor(elapsedSeconds / 60) % 60)
@@ -68,12 +69,14 @@ const App: React.FC = () => {
 
   function resetGame(difficulty: Difficulty) {
     sudoku = getSudoku(difficulty)
+    setTriggerPopinAnimation(prev => { return prev + 1 })
+  }
 
+  useEffect(() => {
     setElapsedSeconds(0)
     setIsNotesMode(false)
     setHighlightedCellValue(CELL_NO_VALUE)
     setIsSolved(false)
-
     setSudokuState(
       new SudokuState(
         sudoku.puzzle,
@@ -82,7 +85,7 @@ const App: React.FC = () => {
         sudoku.difficulty
       )
     )
-  }
+  }, [triggerPopinAnimation])
 
   function wrapCellIndex(index: number): number {
     if (index < GRID_CELL_INDEX_MIN) return index + GRID_NUM_CELLS
@@ -150,7 +153,7 @@ const App: React.FC = () => {
       isSolved={isSolved} />
   )
 
-  const gridComponent = useMemo(() => {
+  const gridFactory = () => {
     const gridCells: Array<ReactNode> = sudokuState.puzzle.split('').map(
       (value: string, index: number) => {
         return GridCell(
@@ -161,7 +164,8 @@ const App: React.FC = () => {
             selectedCellIndex: selectedCellIndex,
             isLockedCell: isLockedCell(index, sudokuState.originalPuzzle),
             notes: sudokuState.notes[index],
-            isSolved: validateSolution(sudokuState.solution, sudokuState.puzzle),
+            isSolved: isSolved,
+            triggerPopinAnimation: triggerPopinAnimation,
             handleValueInput: (index: number, value: string) => {
               setSudokuState(prev => {
                 return updateSudokuState(prev, index, value, isNotesMode)
@@ -174,7 +178,14 @@ const App: React.FC = () => {
     )
 
     return (<Grid gridCells={gridCells} highscoreView={highscoreComponent} />)
-  }, [highlightedCellValue, selectedCellIndex, sudokuState, isNotesMode, highscore, isSolved])
+  }
+
+  /*const gridComponent = useMemo(
+    gridFactory, 
+    [highlightedCellValue, selectedCellIndex, sudokuState, isNotesMode, highscore, isSolved, forceUpdate]
+  )*/
+
+  const gridComponent = gridFactory()
 
   const stopwatchOpacity = isSolved ? 0 : 1
 

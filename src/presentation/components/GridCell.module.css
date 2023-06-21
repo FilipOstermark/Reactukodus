@@ -52,6 +52,16 @@
   transform: scale(1);
 }
 
+
+@keyframes pop-in {
+  from { 
+    opacity: 0;
+   }
+  to { 
+    opacity: 1;
+   }
+}
+
 .sudoku-grid-cell {
   position: relative;
 
@@ -61,8 +71,20 @@
 
   border-bottom: solid var(--grid-default-color) 1px;
   border-right: solid var(--grid-default-color) 1px;
+}
 
-  transition: opacity 500ms ease-out;
+.sudoku-grid-cell[data-popin="true"] {
+  opacity: 0;
+
+  animation-name: pop-in;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+
+  /* Overridden in JS */
+  animation-duration: 1s;
+  animation-delay: 0s;
+  animation-play-state: running;
 }
 
 .sudoku-grid-cell-solved {
