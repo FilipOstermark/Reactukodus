@@ -160,7 +160,7 @@ p {
 
 .utility-button {
   width: fit-content;
-  margin: 0.1rem;
+  margin: 0.2rem;
   border-radius: 2rem;
   text-transform: lowercase;
 }
@@ -191,4 +191,17 @@ p {
   opacity: 1;
   transition: opacity 1s ease-out;
   transition-delay: 1.2s;
+}
+
+.pencil-icon {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  filter: invert(100%);
+  pointer-events: none;
+}
+
+.round {
+  border-radius: 50%;
+  aspect-ratio: 1/1;
 }

@@ -123,3 +123,12 @@
   animation-duration: 1s;
   animation-delay: 0s;
 }
+
+.pencil-icon {
+  display: inline-block;
+  mask: url(../../../public/edit-box-icon.svg);
+  mask-size: cover;
+  background: whitesmoke;
+  width: 1rem;
+  height: 1rem;
+}

@@ -13,6 +13,7 @@ import { SudokuState, updateSudokuState } from '../../domain/SudokuState'
 import { isLockedCell, validateSolution } from '../../core/common/utils-sudoku'
 import { toDisplayTime } from '../../core/common/utils-common'
 import { HighscoreView } from './HighScore'
+import NotesIcon from '../../../public/edit-box-icon.svg'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -212,10 +213,10 @@ const App: React.FC = () => {
         }} />
       <div className='utility-buttons'>
         <button 
-          className='utility-button' 
+          className='utility-button round' 
           onClick={handleNotesButtonClick}
           data-is-notes-mode={isNotesMode}>
-            Notes
+          <img className='pencil-icon' src={NotesIcon} />
         </button>
         <button 
           className='utility-button'
