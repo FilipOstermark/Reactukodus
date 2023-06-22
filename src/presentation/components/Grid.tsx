@@ -4,17 +4,18 @@ import GridLineEmphasis from "./GridLineEmphasis"
 
 export interface GridProps {
   gridCells: Array<ReactNode>,
-  highscoreView: ReactNode
+  highscoreView: ReactNode,
+  isSolved: boolean
 }
 
 const Grid = (
-  { gridCells, highscoreView }: GridProps
+  { gridCells, highscoreView, isSolved }: GridProps
 ) => {
   return (
     <div className='sudoku-grid-wrapper'>
       <h1>Solved</h1>
       <div className='sudoku-grid'>{gridCells}</div>
-      <GridLineEmphasis />
+      <GridLineEmphasis isSolved={isSolved} />
       {highscoreView}
     </div>
   )

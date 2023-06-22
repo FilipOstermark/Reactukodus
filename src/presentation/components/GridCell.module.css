@@ -8,14 +8,12 @@
 .open {
   composes: number;
 
-  color: whitesmoke;
   font-weight: 500;
 }
 
 .locked {
   composes: number;
 
-  color: rgba(245, 245, 245, 0.8);
   font-weight: 400;
 }
 
@@ -34,7 +32,7 @@
   width: 80%;
   aspect-ratio: 1/1;
   border-radius: 50%;
-  background-color: var(--primary-color);
+  background-image: var(--primary-gradient);
   transition: all 150ms;
 }
 
@@ -54,11 +52,17 @@
 
 
 @keyframes pop-in {
-  from { 
+  0% { 
     opacity: 0;
+    color: var(--primary-color);
    }
-  to { 
+  20% {
+    opacity: 0.2;
+    color: var(--primary-color-alt);
+  }
+  100% { 
     opacity: 1;
+    color: rgba(245, 245, 245, 0.8);
    }
 }
 
@@ -69,8 +73,8 @@
   justify-content: center;
   align-items: center;
 
-  border-bottom: solid var(--grid-default-color) 1px;
-  border-right: solid var(--grid-default-color) 1px;
+  outline: solid var(--grid-default-color) 1px;
+  color: rgba(245, 245, 245, 0.8);
 }
 
 .sudoku-grid-cell[data-popin="true"] {

@@ -1,10 +1,15 @@
 :root {
-  --primary-color: rgb(223, 94, 51);
-  --grid-emphasis-color: rgb(222, 143, 117);
+  --primary-color: rgb(179, 87, 250);
+  --primary-color-alt: rgb(85, 122, 255);
+  --grid-emphasis-color: whitesmoke;
+
+  --primary-gradient: linear-gradient(45deg, var(--primary-color), var(--primary-color-alt));
 
   --details-color: whitesmoke;
-  --grid-default-color: rgba(25, 25, 25, 0.262);
-  --gridline-emphasis-width: 3px;
+  --grid-default-color: rgba(208, 159, 228, 0.03);
+  --gridline-emphasis-width: 2px;
+
+  --background-color: rgb(26, 26, 26);
 }
 
 :focus { outline: none; }
@@ -19,6 +24,9 @@
 
   justify-content: center;
   vertical-align: middle;
+
+  color: whitesmoke;
+  background-color: var(--background-color);
 }
 
 h1,
@@ -43,8 +51,8 @@ p {
 .sudoku-grid-wrapper {
   position: relative;
 
-  width: min(90svw, 50svh);
-  height: min(90svw, 50svh);
+  width: min(95svw, 55svh);
+  height: min(95svw, 55svh);
 
   display: flex;
   justify-content: center;
@@ -53,7 +61,6 @@ p {
   margin: 0 auto;
   margin-top: 1rem;
 
-  background-color: rgb(43, 59, 49);
   border-radius: 1rem;
 }
 
@@ -69,11 +76,9 @@ p {
   grid-template-rows: repeat(9, 1fr);
 
   border-radius: 1rem;
-  outline: solid 1px var(--details-color);
-  box-shadow: 0 0 2rem #00000082;
 
   overflow: hidden;
-  background-color: rgb(57, 59, 60);
+  background-color: var(--background-color);
 }
 
 .gridline-emphasis {
@@ -88,6 +93,12 @@ p {
 
   top: 0;
   left: 0;
+
+  transition: all 1s ease-in-out;
+}
+
+.gridline-emphasis[data-is-solved="true"] {
+  opacity: 0;
 }
 
 .flex-direction-column {
@@ -98,12 +109,14 @@ p {
   width: var(--gridline-emphasis-width);
   height: 100%;
   background-color: var(--grid-emphasis-color);
+  box-shadow: 0 0 0.7rem 0.02rem var(--grid-emphasis-color);
 }
 
 .gridline-emphasis-horizontal {
   width: 100%;
   height: var(--gridline-emphasis-width);
   background-color: var(--grid-emphasis-color);
+  box-shadow: 0 0 0.7rem 0.02rem var(--grid-emphasis-color);
 }
 
 .difficulty-selection {
@@ -151,7 +164,7 @@ p {
 }
 
 .utility-button[data-is-notes-mode="true"] {
-  background-color: var(--primary-color);
+  background: var(--primary-gradient);
 }
 
 .highscore {
@@ -165,7 +178,7 @@ p {
   flex-direction: column;
   justify-content: center;
 
-  background-color: rgb(57, 59, 60);
+  background-color: var(--background-color);
 
   border-radius: 1rem;
 
@@ -185,7 +198,7 @@ p {
   flex-direction: column;
   justify-content: center;
 
-  background-color: rgb(57, 59, 60);
+  background-color: var(--background-color);
 
   border-radius: 1rem;
 

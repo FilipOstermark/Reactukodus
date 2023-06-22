@@ -177,7 +177,7 @@ const App: React.FC = () => {
       }
     )
 
-    return (<Grid gridCells={gridCells} highscoreView={highscoreComponent} />)
+    return (<Grid gridCells={gridCells} highscoreView={highscoreComponent} isSolved={isSolved} />)
   }
 
   const gridComponent = gridFactory()
