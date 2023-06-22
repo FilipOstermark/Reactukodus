@@ -14,7 +14,6 @@ export const HighscoreView = (
     isSolved 
   }: HighscoreViewProps
 ) => {
-  const style = isSolved ? 'highscore-showing' : 'highscore'
   const scoreList = highscore[difficulty].map(
     (value: string, index: number) => {
       return (<p key={index}><b>{index + 1}.</b> {value}</p>)
@@ -22,7 +21,7 @@ export const HighscoreView = (
   )
 
   return (
-    <div className={style}>
+    <div className="highscore" data-is-solved={isSolved}>
       <h1>Highscore</h1>
       <h2>({difficulty})</h2>
       {scoreList}

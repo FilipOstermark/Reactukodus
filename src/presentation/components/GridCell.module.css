@@ -55,14 +55,35 @@
   0% { 
     opacity: 0;
     color: var(--primary-color);
+    filter: blur(5px);
    }
-  20% {
-    opacity: 0.2;
+  30% {
+    opacity: 0.3;
     color: var(--primary-color-alt);
+    filter: blur(4px);
   }
   100% { 
     opacity: 1;
     color: rgba(245, 245, 245, 0.8);
+    filter: none;
+   }
+}
+
+@keyframes pop-out {
+  100% { 
+    opacity: 0;
+    color: var(--primary-color);
+    filter: blur(5px);
+   }
+  70% {
+    opacity: 0.3;
+    color: var(--primary-color-alt);
+    filter: blur(4px);
+  }
+  0% { 
+    opacity: 1;
+    color: rgba(245, 245, 245, 0.8);
+    filter: none;
    }
 }
 
@@ -88,12 +109,17 @@
   /* Overridden in JS */
   animation-duration: 1s;
   animation-delay: 0s;
-  animation-play-state: running;
 }
 
 .sudoku-grid-cell-solved {
   composes: sudoku-grid-cell;
 
-  transition: opacity 500ms ease-out;
-  opacity: 0;
+  animation-name: pop-out;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: 1;
+
+  /* Overridden in JS */
+  animation-duration: 1s;
+  animation-delay: 0s;
 }

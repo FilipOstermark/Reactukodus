@@ -7,7 +7,7 @@
 
   --details-color: whitesmoke;
   --grid-default-color: rgba(208, 159, 228, 0.03);
-  --gridline-emphasis-width: 2px;
+  --gridline-emphasis-width: 1px;
 
   --background-color: rgb(26, 26, 26);
 }
@@ -185,34 +185,10 @@ p {
   border-radius: 1rem;
 
   opacity: 0;
-  transition: opacity 1s ease-out;
-  transition-delay: 1.2s;
 }
 
-.highscore-showing {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-
-  pointer-events: none;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  background-color: var(--background-color);
-
-  border-radius: 1rem;
-
+.highscore[data-is-solved="true"] {
   opacity: 1;
   transition: opacity 1s ease-out;
   transition-delay: 1.2s;
-}
-
-.highscore > h2 {
-  margin-bottom: 1rem;
-}
-
-.highscore > p {
-  margin-top: 0.5rem;
 }
