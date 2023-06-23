@@ -1,6 +1,7 @@
 import styles from "./GridCell.module.css"
-import { CELL_NO_SELECTION_INDEX, CELL_NO_VALUE } from '../../core/common/global-constants'
+import { NO_CELL_SELECTED_INDEX, EMPTY_CELL_VALUE } from '../../core/common/global-constants'
 import { useEffect, useRef, useState } from "react"
+import { getPopinAnimationDelay } from "../utils-presentation"
 
 
 export interface GridCellProps {
@@ -30,33 +31,31 @@ const GridCell = (
     setSelectedCellIndex
   }: GridCellProps
 ) => {
-  const displayValue: string = cellValue === CELL_NO_VALUE ? "" : cellValue
+  const displayValue: string = cellValue === EMPTY_CELL_VALUE ? "" : cellValue
   const isSelectedCell: boolean = selectedCellIndex == index
-  const isHighlightedValue: boolean = highlightedCellValue != CELL_NO_VALUE && (cellValue == highlightedCellValue)
-  const isHighlightedNote: boolean = highlightedCellValue != CELL_NO_VALUE && (notes.includes(highlightedCellValue))
+  const isHighlightedValue: boolean = highlightedCellValue != EMPTY_CELL_VALUE && (cellValue == highlightedCellValue)
+  const isHighlightedNote: boolean = highlightedCellValue != EMPTY_CELL_VALUE && (notes.includes(highlightedCellValue))
   const isHighlightShowing: boolean = isSelectedCell || isHighlightedValue || isHighlightedNote
+  const highlightStyle = isHighlightShowing ? styles["highlight-showing"] : styles["highlight-hidden"]
+  const defaultNumberStyle = isLockedCell ? styles.locked : styles.open
+  const gridCellStyle = isSolved ? styles["sudoku-grid-cell-solved"] : styles["sudoku-grid-cell"]
   const notesDisplay = notes.split('').sort().join('')
 
   const [popin, setPopin] = useState(false)
-
-  const transitionDuration = useRef<string>(Math.round(200 + Math.random() * 500) + "ms")
+  const transitionDuration = useRef<string>(getPopinAnimationDelay())
 
   useEffect(() => {
     setPopin(true)
   }, [triggerPopinAnimation])
 
   function updateSelectedCellIndex(currentIndex: number, clickedIndex: number) {
-    const newIndex = currentIndex === clickedIndex ? CELL_NO_SELECTION_INDEX : clickedIndex
-    if (highlightedCellValue == CELL_NO_VALUE) {
+    const newIndex = currentIndex === clickedIndex ? NO_CELL_SELECTED_INDEX : clickedIndex
+    if (highlightedCellValue == EMPTY_CELL_VALUE) {
       setSelectedCellIndex(newIndex)
     } else {
       handleValueInput(clickedIndex, highlightedCellValue)
     }
   }
-
-  const highlightStyleClassName = isHighlightShowing ? styles["highlight-showing"] : styles["highlight-hidden"]
-  const defaultNumberStyle = isLockedCell ? styles.locked : styles.open
-  const gridCellStyle = isSolved ? styles["sudoku-grid-cell-solved"] : styles["sudoku-grid-cell"]
 
   return (
     <div
@@ -68,7 +67,7 @@ const GridCell = (
       data-popin={popin}
     >
       <div className='sudoku-grid-cell-inset-border'></div>
-      <div className={`${highlightStyleClassName}`} />
+      <div className={`${highlightStyle}`} />
       <p className={defaultNumberStyle}>
         {displayValue}
       </p>

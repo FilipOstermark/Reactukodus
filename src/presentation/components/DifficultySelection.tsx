@@ -7,7 +7,7 @@ interface DifficultySelectionProps {
   resetPuzzle: (difficulty: Difficulty) => void
 }
 
-const DifficultySelection: React.FC<DifficultySelectionProps> = (
+const DifficultySelection = (
   { currentDifficulty, resetPuzzle }: DifficultySelectionProps
 ) => {
 
@@ -22,12 +22,28 @@ const DifficultySelection: React.FC<DifficultySelectionProps> = (
   return (
     <div className='difficulty-selection'>
       <div>
-        <button className={getStyle('easy')} onClick={() => resetPuzzle('easy')}>Easy</button>
-        <button className={getStyle('medium')} onClick={() => resetPuzzle('medium')}>Medium</button>
+        <button 
+          className={getStyle('easy')} 
+          onClick={() => resetPuzzle('easy')}>
+            Easy
+        </button>
+        <button 
+          className={getStyle('medium')} 
+          onClick={() => resetPuzzle('medium')}>
+            Medium
+        </button>
       </div>
       <div>
-        <button className={getStyle('hard')} onClick={() => resetPuzzle('hard')}>Hard</button>
-        <button className={getStyle('expert')} onClick={() => resetPuzzle('expert')}>Expert</button>
+        <button 
+          className={getStyle('hard')} 
+          onClick={() => resetPuzzle('hard')}>
+            Hard
+        </button>
+        <button 
+          className={getStyle('expert')} 
+          onClick={() => resetPuzzle('expert')}>
+            Expert
+        </button>
       </div>
     </div>
   )

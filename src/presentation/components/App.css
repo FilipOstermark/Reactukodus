@@ -1,9 +1,13 @@
 :root {
   --primary-color: rgb(179, 87, 250);
+  --primary-color-bright: rgb(216, 165, 255);
   --primary-color-alt: rgb(85, 122, 255);
-  --grid-emphasis-color: whitesmoke;
+  --primary-color-alt-bright: rgb(140, 165, 255);
 
   --primary-gradient: linear-gradient(45deg, var(--primary-color), var(--primary-color-alt));
+  --primary-gradient-bright: linear-gradient(45deg, var(--primary-color-bright), var(--primary-color-alt-bright));
+
+  --grid-emphasis-color: whitesmoke;
 
   --details-color: whitesmoke;
   --grid-default-color: rgba(208, 159, 228, 0.03);
@@ -191,9 +195,23 @@ p {
   opacity: 1;
   transition: opacity 1s ease-out;
   transition-delay: 1.2s;
+  pointer-events: visible;
 }
 
-.pencil-icon {
+.highscore-entry[data-is-most-recent="true"] {
+  color: var(--primary-color-alt-bright);
+  background-color: #f3ec78;
+  background-image: var(--primary-gradient-bright);
+  background-size: 100%;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent; 
+  -moz-text-fill-color: transparent;
+
+  font-weight: 800;
+}
+
+.icon {
   display: inline-block;
   width: 1rem;
   height: 1rem;

@@ -1,4 +1,4 @@
-import { GRID_NUM_CELLS, GRID_SIZE, GRID_CELL_INDEX_MIN, GRID_CELL_INDEX_MAX, CELL_NO_VALUE } from "./global-constants"
+import { GRID_NUM_CELLS, GRID_SIZE, GRID_CELL_INDEX_MIN, GRID_CELL_INDEX_MAX, EMPTY_CELL_VALUE, ALLOWED_CELL_VALUES, NO_CELL_SELECTED_INDEX } from "./global-constants"
 import { range } from "./utils-common"
 
 export function isLockedCell(index: number, originalPuzzle: string): boolean {
@@ -6,7 +6,7 @@ export function isLockedCell(index: number, originalPuzzle: string): boolean {
     return true
   }
 
-  return originalPuzzle[index] != CELL_NO_VALUE
+  return originalPuzzle[index] != EMPTY_CELL_VALUE
 }
 
 function getRow(index: number): number {
@@ -106,4 +106,20 @@ export function clearIntersectingNotesOnInput(
 
 export function validateSolution(expected: string, actual: string): boolean {
   return expected === actual
+}
+
+export function wrapCellIndex(index: number): number {
+  if (index < GRID_CELL_INDEX_MIN) return index + GRID_NUM_CELLS
+  else if (index > GRID_CELL_INDEX_MAX) return index - GRID_NUM_CELLS
+  
+  return index
+}
+
+export function isHighlightValueChange(selectedCellIndex: number, key: string): boolean {
+  const isNumeric = ALLOWED_CELL_VALUES.includes(key)
+  return selectedCellIndex === NO_CELL_SELECTED_INDEX && isNumeric
+}
+
+export function isAnyCellSelected(selectedCellIndex: number): boolean {
+  return selectedCellIndex !== NO_CELL_SELECTED_INDEX
 }

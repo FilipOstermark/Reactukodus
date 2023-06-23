@@ -1,22 +1,6 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
-
-export interface Highscore {
-  easy: Array<string>
-  medium: Array<string>
-  hard: Array<string>
-  expert: Array<string>
-}
-
-const KEY_HIGHSCORE = "highscore"
-
-function defaultHighscore(): Highscore {
-  return { 
-    easy: [],
-    medium: [],
-    hard: [],
-    expert: []
-  }
-}
+import { Highscore, defaultHighscore, isHighscore, updateHighscore } from "../domain/Highscore"
+import { KEY_HIGHSCORE } from "../core/common/global-constants"
 
 export interface HighScoreRepository {
   getHighscore: () => Highscore
@@ -31,7 +15,7 @@ class HighScoreRepositoryImpl implements HighScoreRepository {
         localStorage.getItem(KEY_HIGHSCORE) ?? ""
       )
 
-      if (obj satisfies Highscore) {
+      if (isHighscore(obj)) {
         return obj
       }
 
@@ -50,13 +34,8 @@ class HighScoreRepositoryImpl implements HighScoreRepository {
     difficulty: Difficulty
   ) => {
     const highscore: Highscore = this.getHighscore()
-
-    console.log("Highscore: " + highscore)
-
-    highscore[difficulty].push(score)
-    highscore[difficulty] = highscore[difficulty].sort().slice(0, 10)
-
-    this.setHighscore(highscore)
+    const newHighscore = updateHighscore(highscore, difficulty, score)
+    this.setHighscore(newHighscore)
   }
 }
 

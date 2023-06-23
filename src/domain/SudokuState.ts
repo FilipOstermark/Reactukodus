@@ -1,4 +1,4 @@
-import { GRID_NUM_CELLS, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN, CELL_NO_VALUE } from "../core/common/global-constants"
+import { GRID_NUM_CELLS, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN, EMPTY_CELL_VALUE } from "../core/common/global-constants"
 import { isStrictEqualArray } from "../core/common/utils-common"
 import { clearIntersectingNotesOnInput } from "../core/common/utils-sudoku"
 import { isLockedCell } from "../core/common/utils-sudoku"
@@ -17,7 +17,7 @@ export function updateSudokuState(
     return currentState
   }
 
-  if (isNote && currentState.puzzle[index] == CELL_NO_VALUE) {
+  if (isNote && currentState.puzzle[index] == EMPTY_CELL_VALUE) {
     const newNotes = [...currentState.notes]
     const cellNotes: string = newNotes[index]
     if (cellNotes.includes(value)) {
@@ -41,10 +41,16 @@ export function updateSudokuState(
     )
   }
 
-  const newNotes = clearIntersectingNotesOnInput(index, value, currentState.notes)
+  const newNotes = clearIntersectingNotesOnInput(
+    index, 
+    value, 
+    currentState.notes
+  )
   newNotes[index] = ""
 
-  const newPuzzle = currentState.puzzle.substring(0, index) + value + currentState.puzzle.substring(index + 1)
+  const newPuzzle = currentState.puzzle.substring(0, index) 
+    + value 
+    + currentState.puzzle.substring(index + 1)
 
   if (currentState.puzzle === newPuzzle) {
     console.log("Same state, not updating (2)")
