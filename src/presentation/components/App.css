@@ -169,7 +169,7 @@ p {
   text-transform: lowercase;
 }
 
-.utility-button[data-is-notes-mode="true"] {
+.utility-button[data-is-filled="true"] {
   background: var(--primary-gradient);
 }
 

@@ -15,6 +15,7 @@ import { toDisplayTime } from '../../core/common/utils-common'
 import { HighscoreView } from './HighScoreView'
 import NotesIcon from '../../../public/edit-box-icon.svg'
 import UndoIcon from '../../../public/undo-icon.svg'
+import HighscoreIcon from '../../../public/highscore-icon.svg'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -34,6 +35,7 @@ const App = () => {
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [highscore, setHighscore] = useState(highscoreRepository.getHighscore())
   const [isSolved, setIsSolved] = useState(false)
+  const [isViewingHighscore, setIsViewingHighscore] = useState(false)
   const [startAnimationTrigger, setStartAnimationTrigger] = useState(0)
 
   const displaySeconds = toDisplayTime(elapsedSeconds % 60)
@@ -66,10 +68,10 @@ const App = () => {
       highscoreRepository.addScore(displayStopwatch, sudokuState.difficulty)
       setHighscore(highscoreRepository.getHighscore())
       setIsSolved(true)
+      setIsViewingHighscore(true)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sudokuState])
-
 
   useEffect(() => {
     setElapsedSeconds(0)
@@ -80,8 +82,8 @@ const App = () => {
       new SudokuState(
         sudoku.puzzle,
         sudoku.puzzle,
-        // '-' + sudoku.solution.slice(1, 81),
-        // '-' + sudoku.solution.slice(1, 81),
+        // '-' + sudoku.solution.slice(1, 81), // For testing highscore
+        // '-' + sudoku.solution.slice(1, 81), // For testing highscore
         sudoku.solution,
         sudoku.difficulty
       )
@@ -151,11 +153,23 @@ const App = () => {
     }
   }
 
+  function handleHighscoreButtonClick() {
+    setIsViewingHighscore(prev => {
+      if (isSolved && prev) {
+        resetGame(sudokuState.difficulty)
+        return false
+      }
+
+      return !prev
+    })
+  }
+
   const highscoreComponent = (
     <HighscoreView 
       highscore={highscore} 
       difficulty={sudokuState.difficulty}
-      isSolved={isSolved} />
+      isSolved={isSolved}
+      isViewingHighscore={isViewingHighscore} />
   )
 
   function gridFactory() {
@@ -186,7 +200,7 @@ const App = () => {
       <Grid 
         gridCells={gridCells} 
         highscoreView={highscoreComponent} 
-        isSolved={isSolved} />
+        isSolved={isSolved || isViewingHighscore} />
     )
   }
 
@@ -217,19 +231,37 @@ const App = () => {
           })
         }} />
       <div className='utility-buttons'>
-        <button 
-          className='utility-button round' 
+        <IconButton
+          iconSrc={NotesIcon} 
           onClick={handleNotesButtonClick}
-          data-is-notes-mode={isNotesMode}>
-          <img className='icon' src={NotesIcon} />
-        </button>
-        <button 
-          className='utility-button'
-          onClick={handleUndoButtonClick}>
-          <img className='icon' src={UndoIcon} />
-        </button>
+          isFilled={isNotesMode} />
+        <IconButton 
+          iconSrc={UndoIcon}
+          onClick={handleUndoButtonClick}
+          isFilled={false} />
+        <IconButton 
+          iconSrc={HighscoreIcon}
+          onClick={handleHighscoreButtonClick}
+          isFilled={isViewingHighscore} />
       </div>
     </div>
+  )
+}
+
+interface IconButtonProps {
+  isFilled: boolean
+  iconSrc: string
+  onClick: () => void
+}
+
+const IconButton = (props: IconButtonProps) => {
+  return (
+    <button 
+      className='utility-button'
+      data-is-filled={props.isFilled}
+      onClick={props.onClick}>
+      <img className='icon' src={props.iconSrc} />
+    </button>
   )
 }
 
