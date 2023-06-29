@@ -1,35 +1,37 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
-import { Highscore, defaultHighscore, isHighscore, updateHighscore } from "../domain/model/Highscore"
-import { KEY_HIGHSCORE } from "../common/global-constants"
-
+import { Highscore, updateHighscore } from "../domain/model/Highscore"
+import { HighscoreDataSource } from "./HighscoreDataSource"
+import { highscoreLocalStorageDataSource } from "./HighscoreLocalStorageDataSource"
+import { Observable } from "rxjs"
 
 export interface HighScoreRepository {
+  getHighscore$: () => Observable<Highscore>
   getHighscore: () => Highscore
   setHighscore: (newHighscore: Highscore) => void
   addScore: (score: string, difficulty: Difficulty) => void
 }
 
 class HighScoreRepositoryImpl implements HighScoreRepository {
+
+  private dataSource: HighscoreDataSource
+
+  constructor(dataSource: HighscoreDataSource) {
+    this.dataSource = dataSource
+  }
+
+  getHighscore$: () => Observable<Highscore> = () => {
+    return this.dataSource.getHighscore$()
+  }
+  
   getHighscore: () => Highscore = () => {
-    try {
-      const obj = JSON.parse(
-        localStorage.getItem(KEY_HIGHSCORE) ?? ""
-      )
-
-      if (isHighscore(obj)) {
-        return obj
-      }
-
-      return defaultHighscore()
-    } catch (e) {
-      return defaultHighscore()
-    }
+    return this.dataSource.getHighscore()
   }
 
   setHighscore: (newHighscore: Highscore) => void = newHighscore => {
-    localStorage.setItem(KEY_HIGHSCORE, JSON.stringify(newHighscore))
+    this.dataSource.setHighscore(newHighscore)
   }
 
+  // TODO Use case
   addScore: (score: string, difficulty: Difficulty) => void = (
     score: string, 
     difficulty: Difficulty
@@ -40,6 +42,8 @@ class HighScoreRepositoryImpl implements HighScoreRepository {
   }
 }
 
-const highscoreRepository: HighScoreRepository = new HighScoreRepositoryImpl()
+const highscoreRepository: HighScoreRepository = new HighScoreRepositoryImpl(
+  highscoreLocalStorageDataSource
+)
 
 export default highscoreRepository

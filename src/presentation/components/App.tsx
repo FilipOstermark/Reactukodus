@@ -33,8 +33,16 @@ const App = () => {
       .subscribe(state => {
         setSudokuState(state)
       })
+    const highscoreSubscription = highscoreRepository
+      .getHighscore$()
+      .subscribe(highscore => {
+        setHighscore(highscore)
+      })
 
-    return () => { sudokuStateSubscription.unsubscribe() }
+    return () => { 
+      sudokuStateSubscription.unsubscribe() 
+      highscoreSubscription.unsubscribe()
+    }
   }, [])
 
   const [selectedCellIndex, setSelectedCellIndex] = useState(NO_CELL_SELECTED_INDEX)
@@ -74,7 +82,6 @@ const App = () => {
   useEffect(() => {
     if (validateSolution(sudokuState.solution, sudokuState.puzzle)) {
       highscoreRepository.addScore(displayStopwatch, sudokuState.difficulty)
-      setHighscore(highscoreRepository.getHighscore())
       setIsSolved(true)
       setIsViewingHighscore(true)
     }
