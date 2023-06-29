@@ -1,4 +1,4 @@
-import { SudokuStateRepository, sudokuStateRepository } from "../../../data/SudokuStateRepository"
+import { SudokuStateRepository, sudokuStateRepository } from "../../data/SudokuStateRepository"
 
 export class UndoSudokuStateUseCase {
   private sudokuStateRepository: SudokuStateRepository

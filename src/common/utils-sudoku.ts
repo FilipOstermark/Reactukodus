@@ -1,5 +1,5 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
-import { SudokuState } from "../domain/entity/SudokuState"
+import { SudokuState } from "../domain/model/SudokuState"
 import { GRID_NUM_CELLS, GRID_SIZE, GRID_CELL_INDEX_MIN, GRID_CELL_INDEX_MAX, EMPTY_CELL_VALUE, ALLOWED_CELL_VALUES, NO_CELL_SELECTED_INDEX } from "./global-constants"
 import { range } from "./utils-common"
 import { getSudoku } from "sudoku-gen"

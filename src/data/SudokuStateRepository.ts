@@ -1,5 +1,5 @@
-import { createDefaultSudokuState } from "../core/common/utils-sudoku"
-import { SudokuState } from "../core/domain/entity/SudokuState"
+import { createDefaultSudokuState } from "../common/utils-sudoku"
+import { SudokuState } from "../domain/model/SudokuState"
 import { BehaviorSubject, Observable } from "rxjs"
 
 export interface SudokuStateRepository {

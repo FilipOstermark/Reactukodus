@@ -1,5 +1,5 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
-import { SudokuStateRepository, sudokuStateRepository } from "../../../data/SudokuStateRepository"
+import { SudokuStateRepository, sudokuStateRepository } from "../../data/SudokuStateRepository"
 import { createDefaultSudokuState } from "../../common/utils-sudoku"
 
 export class ResetSudokuStateUseCase {
