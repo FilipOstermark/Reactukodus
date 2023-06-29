@@ -1,7 +1,7 @@
-import { GRID_NUM_CELLS, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN, EMPTY_CELL_VALUE } from "../core/common/global-constants"
-import { isStrictEqualArray } from "../core/common/utils-common"
-import { clearIntersectingNotesOnInput } from "../core/common/utils-sudoku"
-import { isLockedCell } from "../core/common/utils-sudoku"
+import { GRID_NUM_CELLS, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN, EMPTY_CELL_VALUE } from "../../common/global-constants"
+import { isStrictEqualArray } from "../../common/utils-common"
+import { clearIntersectingNotesOnInput } from "../../common/utils-sudoku"
+import { isLockedCell } from "../../common/utils-sudoku"
 
 export function updateSudokuState(
   currentState: SudokuState, 

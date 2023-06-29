@@ -1,6 +1,6 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
-import { Highscore } from "../../domain/Highscore"
-import { HighscoreEntry } from "../../domain/HighscoreEntry"
+import { Highscore } from "../../core/domain/entity/Highscore"
+import { HighscoreEntry } from "../../core/domain/entity/HighscoreEntry"
 
 interface HighscoreViewProps {
   highscore: Highscore,

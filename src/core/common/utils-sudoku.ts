@@ -1,5 +1,8 @@
+import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
+import { SudokuState } from "../domain/entity/SudokuState"
 import { GRID_NUM_CELLS, GRID_SIZE, GRID_CELL_INDEX_MIN, GRID_CELL_INDEX_MAX, EMPTY_CELL_VALUE, ALLOWED_CELL_VALUES, NO_CELL_SELECTED_INDEX } from "./global-constants"
 import { range } from "./utils-common"
+import { getSudoku } from "sudoku-gen"
 
 export function isLockedCell(index: number, originalPuzzle: string): boolean {
   if (index < GRID_CELL_INDEX_MIN || index > GRID_CELL_INDEX_MAX) {
@@ -122,4 +125,16 @@ export function isHighlightValueChange(selectedCellIndex: number, key: string): 
 
 export function isAnyCellSelected(selectedCellIndex: number): boolean {
   return selectedCellIndex !== NO_CELL_SELECTED_INDEX
+}
+
+export function createDefaultSudokuState(
+  difficulty: Difficulty = 'easy'
+): SudokuState {
+  const sudoku = getSudoku(difficulty)
+  return new SudokuState(
+    sudoku.puzzle,
+    sudoku.puzzle,
+    sudoku.solution,
+    sudoku.difficulty
+  )
 }

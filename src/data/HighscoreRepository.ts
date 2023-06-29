@@ -1,6 +1,7 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
-import { Highscore, defaultHighscore, isHighscore, updateHighscore } from "../domain/Highscore"
+import { Highscore, defaultHighscore, isHighscore, updateHighscore } from "../core/domain/entity/Highscore"
 import { KEY_HIGHSCORE } from "../core/common/global-constants"
+
 
 export interface HighScoreRepository {
   getHighscore: () => Highscore

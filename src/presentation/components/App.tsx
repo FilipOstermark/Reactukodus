@@ -9,25 +9,33 @@ import DifficultySelection from './DifficultySelection'
 import NumberSelection from './NumberSelection'
 import { ALLOWED_CELL_VALUES, ARROW_KEYS, ARROW_KEY_INDEX_MODIFIERS, NO_CELL_SELECTED_INDEX, EMPTY_CELL_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN } from '../../core/common/global-constants'
 import highscoreRepository from '../../data/HighscoreRepository'
-import { SudokuState, updateSudokuState } from '../../domain/SudokuState'
 import { isAnyCellSelected, isHighlightValueChange, isLockedCell, validateSolution, wrapCellIndex } from '../../core/common/utils-sudoku'
 import { toDisplayTime } from '../../core/common/utils-common'
 import { HighscoreView } from './HighScoreView'
 import NotesIcon from '../../../public/edit-box-icon.svg'
 import UndoIcon from '../../../public/undo-icon.svg'
 import HighscoreIcon from '../../../public/highscore-icon.svg'
+import { sudokuStateRepository } from '../../data/SudokuStateRepository'
+import { updateSudokuStateUseCase } from '../../core/domain/usecase/UpdateSudokuStateUseCase'
+import { resetSudokuStateUseCase } from '../../core/domain/usecase/ResetSudokuStateUseCase'
+import { undoSudokuStateUseCase } from '../../core/domain/usecase/UndoSudokuStateUseCase'
 
 let sudoku: Sudoku = getSudoku('easy')
 
 const App = () => {
   const [sudokuState, setSudokuState] = useState(
-    new SudokuState(
-      sudoku.puzzle, 
-      sudoku.puzzle, 
-      sudoku.solution, 
-      sudoku.difficulty
-    )
+    sudokuStateRepository.getState()
   )
+
+  useEffect(() => {
+    const sudokuStateSubscription = sudokuStateRepository
+      .getState$()
+      .subscribe(state => {
+        setSudokuState(state)
+      })
+
+    return () => { sudokuStateSubscription.unsubscribe() }
+  }, [])
 
   const [selectedCellIndex, setSelectedCellIndex] = useState(NO_CELL_SELECTED_INDEX)
   const [highlightedCellValue, setHighlightedCellValue] = useState(EMPTY_CELL_VALUE)
@@ -78,16 +86,7 @@ const App = () => {
     setIsNotesMode(false)
     setHighlightedCellValue(EMPTY_CELL_VALUE)
     setIsSolved(false)
-    setSudokuState(
-      new SudokuState(
-        sudoku.puzzle,
-        sudoku.puzzle,
-        // '-' + sudoku.solution.slice(1, 81), // For testing highscore
-        // '-' + sudoku.solution.slice(1, 81), // For testing highscore
-        sudoku.solution,
-        sudoku.difficulty
-      )
-    )
+    resetSudokuStateUseCase.perform(sudoku.difficulty)
   }, [startAnimationTrigger])
 
   function resetGame(difficulty: Difficulty) {
@@ -114,14 +113,11 @@ const App = () => {
   }
 
   function handleCellValueUpdate(value: string) {
-    setSudokuState(prev => {
-      return updateSudokuState(
-        prev, 
-        selectedCellIndex, 
-        value, 
-        isNotesMode
-      )
-    })
+    updateSudokuStateUseCase.perform(
+      selectedCellIndex,
+      value,
+      isNotesMode
+    )
   }
 
   function handleKeyDown({ key }: React.KeyboardEvent<HTMLDivElement>) {
@@ -147,10 +143,7 @@ const App = () => {
   }
 
   function handleUndoButtonClick() {
-    const prevState = sudokuState.previousState
-    if (prevState !== undefined) {
-      setSudokuState(prevState)
-    }
+    undoSudokuStateUseCase.perform()
   }
 
   function handleHighscoreButtonClick() {
@@ -186,9 +179,11 @@ const App = () => {
             isSolved: isSolved,
             triggerPopinAnimation: startAnimationTrigger,
             handleValueInput: (index: number, value: string) => {
-              setSudokuState(prev => {
-                return updateSudokuState(prev, index, value, isNotesMode)
-              })
+              updateSudokuStateUseCase.perform(
+                index,
+                value,
+                isNotesMode
+              )
             },
             setSelectedCellIndex: setSelectedCellIndex
           }
@@ -224,11 +219,11 @@ const App = () => {
             return
           }
 
-          setSudokuState(prev => {
-            return updateSudokuState(
-              prev, index, value, isNotesMode
-            )
-          })
+          updateSudokuStateUseCase.perform(
+            index, 
+            value, 
+            isNotesMode
+          )
         }} />
       <div className='utility-buttons'>
         <IconButton
