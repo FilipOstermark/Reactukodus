@@ -1,7 +1,7 @@
 import styles from "./GridCell.module.css"
-import { NO_CELL_SELECTED_INDEX, EMPTY_CELL_VALUE } from '../../common/global-constants'
+import { NO_CELL_SELECTED_INDEX, EMPTY_CELL_VALUE } from '../../../common/global-constants'
 import { useEffect, useRef, useState } from "react"
-import { getPopinAnimationDelay } from "../utils-presentation"
+import { getPopinAnimationDelay } from "../../utils-presentation"
 
 
 export interface GridCellProps {
