@@ -19,6 +19,7 @@ import { sudokuStateRepository } from '../../data/SudokuStateRepository'
 import { updateSudokuStateUseCase } from '../../domain/usecase/UpdateSudokuStateUseCase'
 import { resetSudokuStateUseCase } from '../../domain/usecase/ResetSudokuStateUseCase'
 import { undoSudokuStateUseCase } from '../../domain/usecase/UndoSudokuStateUseCase'
+import { addHighscoreUseCase } from '../../domain/usecase/AddHighscoreUseCase'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -81,7 +82,7 @@ const App = () => {
 
   useEffect(() => {
     if (validateSolution(sudokuState.solution, sudokuState.puzzle)) {
-      highscoreRepository.addScore(displayStopwatch, sudokuState.difficulty)
+      addHighscoreUseCase.perform(displayStopwatch, sudokuState.difficulty)
       setIsSolved(true)
       setIsViewingHighscore(true)
     }
