@@ -54,5 +54,6 @@ export default defineConfig({
   base: "/Reactukodus",
   plugins: [
     react(), pwaPlugin
-  ]
+  ],
+  envDir: "env"
 })

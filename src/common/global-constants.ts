@@ -14,5 +14,3 @@ export const ARROW_KEY_INDEX_MODIFIERS: Map<string, number> = new Map([
   ['ArrowLeft', -1],
   ['ArrowRight', +1],
 ])
-
-export const IS_TESTING_HIGHSCORE = true
