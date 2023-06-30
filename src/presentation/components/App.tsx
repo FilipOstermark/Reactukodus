@@ -1,15 +1,14 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 import { getSudoku } from 'sudoku-gen'
 import { Difficulty } from 'sudoku-gen/dist/types/difficulty.type'
 import { Sudoku } from 'sudoku-gen/dist/types/sudoku.type'
 import Grid from './sudoku/Grid'
-import GridCell from './sudoku/GridCell'
 import DifficultySelection from './difficultyselection/DifficultySelection'
 import NumberSelection from './numberselection/NumberSelection'
 import { ALLOWED_CELL_VALUES, ARROW_KEYS, ARROW_KEY_INDEX_MODIFIERS, NO_CELL_SELECTED_INDEX, EMPTY_CELL_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN } from '../../common/global-constants'
 import highscoreRepository from '../../data/HighscoreRepository'
-import { isAnyCellSelected, isHighlightValueChange, isLockedCell, wrapCellIndex } from '../../common/utils-sudoku'
+import { isAnyCellSelected, isHighlightValueChange, wrapCellIndex } from '../../common/utils-sudoku'
 import { HighscoreView } from './highscore/HighScoreView'
 import NotesIcon from '../assets/edit-box-icon.svg'
 import UndoIcon from '../assets/undo-icon.svg'
@@ -162,37 +161,17 @@ const App = () => {
     })
   }
 
-  function gridFactory() {
-    const gridCells: Array<ReactNode> = sudokuState.puzzle.split('').map(
-      (value: string, index: number) => {
-        return GridCell(
-          {
-            index: index,
-            cellValue: value,
-            highlightedCellValue: highlightedCellValue,
-            selectedCellIndex: selectedCellIndex,
-            isLockedCell: isLockedCell(index, sudokuState.originalPuzzle),
-            notes: sudokuState.notes[index],
-            isSolved: isSolved,
-            triggerPopinAnimation: startAnimationTrigger,
-            handleValueInput: (index: number, value: string) => {
-              updateSudokuStateUseCase.perform(
-                index,
-                value,
-                isNotesMode
-              )
-            },
-            setSelectedCellIndex: setSelectedCellIndex
-          }
-        )
-      }
-    )
-
-    return (
-      <Grid 
-        gridCells={gridCells} 
-        isSolved={isSolved || isViewingHighscore} />
-    )
+  function updateSelectedCellIndex(currentIndex: number, clickedIndex: number) {
+    const newIndex = currentIndex === clickedIndex ? NO_CELL_SELECTED_INDEX : clickedIndex
+    if (highlightedCellValue == EMPTY_CELL_VALUE) {
+      setSelectedCellIndex(newIndex)
+    } else {
+      updateSudokuStateUseCase.perform(
+        clickedIndex,
+        highlightedCellValue,
+        isNotesMode
+      )
+    }
   }
 
   return (
@@ -201,7 +180,13 @@ const App = () => {
         currentDifficulty={sudokuState.difficulty} 
         resetPuzzle={resetGame} />
       <div className='sudoku-grid-wrapper'>
-        {gridFactory()}
+        <Grid 
+          isSolved={isSolved || isViewingHighscore} 
+          sudokuState={sudokuState}
+          highlightedCellValue={highlightedCellValue}
+          selectedCellIndex={selectedCellIndex}
+          startAnimationTrigger={startAnimationTrigger}
+          updateSelectedCellIndex={updateSelectedCellIndex} />
         <HighscoreView 
           highscore={highscore} 
           difficulty={sudokuState.difficulty}

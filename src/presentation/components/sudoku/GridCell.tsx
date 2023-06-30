@@ -1,5 +1,5 @@
 import styles from "./GridCell.module.css"
-import { NO_CELL_SELECTED_INDEX, EMPTY_CELL_VALUE } from '../../../common/global-constants'
+import { EMPTY_CELL_VALUE } from '../../../common/global-constants'
 import { useEffect, useRef, useState } from "react"
 import { getPopinAnimationDelay } from "../../utils-presentation"
 
@@ -7,36 +7,30 @@ import { getPopinAnimationDelay } from "../../utils-presentation"
 export interface GridCellProps {
   index: number
   cellValue: string
-  highlightedCellValue: string
-  selectedCellIndex: number
+  isHighlighted: boolean
+  isSelectedCell: boolean
   isLockedCell: boolean
-  notes: string,
-  isSolved: boolean,
-  triggerPopinAnimation: number,
-  handleValueInput: (index: number, value: string) => void
-  setSelectedCellIndex: (idx: number) => void
+  notes: string
+  isSolved: boolean
+  triggerPopinAnimation: number
+  onClick: () => void
 }
 
 const GridCell = (
   {
     index,
     cellValue, 
-    highlightedCellValue, 
-    selectedCellIndex,
+    isHighlighted, 
     isLockedCell,
     notes,
     isSolved,
     triggerPopinAnimation,
-    handleValueInput,
-    setSelectedCellIndex
+    onClick
   }: GridCellProps
 ) => {
   const displayValue: string = cellValue === EMPTY_CELL_VALUE ? "" : cellValue
-  const isSelectedCell: boolean = selectedCellIndex == index
-  const isHighlightedValue: boolean = highlightedCellValue != EMPTY_CELL_VALUE && (cellValue == highlightedCellValue)
-  const isHighlightedNote: boolean = highlightedCellValue != EMPTY_CELL_VALUE && (notes.includes(highlightedCellValue))
-  const isHighlightShowing: boolean = isSelectedCell || isHighlightedValue || isHighlightedNote
-  const highlightStyle = isHighlightShowing ? styles["highlight-showing"] : styles["highlight-hidden"]
+  
+  const highlightStyle = isHighlighted ? styles["highlight-showing"] : styles["highlight-hidden"]
   const defaultNumberStyle = isLockedCell ? styles.locked : styles.open
   const gridCellStyle = isSolved ? styles["sudoku-grid-cell-solved"] : styles["sudoku-grid-cell"]
   const notesDisplay = notes.split('').sort().join('')
@@ -44,25 +38,18 @@ const GridCell = (
   const [popin, setPopin] = useState(false)
   const transitionDuration = useRef<string>(getPopinAnimationDelay())
 
+  console.log("I render", index)
+
   useEffect(() => {
     setPopin(true)
   }, [triggerPopinAnimation])
-
-  function updateSelectedCellIndex(currentIndex: number, clickedIndex: number) {
-    const newIndex = currentIndex === clickedIndex ? NO_CELL_SELECTED_INDEX : clickedIndex
-    if (highlightedCellValue == EMPTY_CELL_VALUE) {
-      setSelectedCellIndex(newIndex)
-    } else {
-      handleValueInput(clickedIndex, highlightedCellValue)
-    }
-  }
 
   return (
     <div
       key={index}
       className={gridCellStyle}
       style={{animationDelay: transitionDuration.current, animationDuration: transitionDuration.current}}
-      onClick={() => updateSelectedCellIndex(selectedCellIndex, index)}
+      onClick={onClick}
       onAnimationEnd={() => { setPopin(false) }}
       data-popin={popin}
     >
