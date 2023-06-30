@@ -10,7 +10,9 @@ export class ResetSudokuStateUseCase {
   }
 
   public perform(difficulty: Difficulty): void {
-    this.sudokuStateRepository.setState(createDefaultSudokuState(difficulty))
+    this.sudokuStateRepository.setState(
+      createDefaultSudokuState(difficulty)
+    )
   }
 }
 

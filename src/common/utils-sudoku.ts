@@ -1,6 +1,6 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
 import { SudokuState } from "../domain/model/SudokuState"
-import { GRID_NUM_CELLS, GRID_SIZE, GRID_CELL_INDEX_MIN, GRID_CELL_INDEX_MAX, EMPTY_CELL_VALUE, ALLOWED_CELL_VALUES, NO_CELL_SELECTED_INDEX } from "./global-constants"
+import { GRID_NUM_CELLS, GRID_SIZE, GRID_CELL_INDEX_MIN, GRID_CELL_INDEX_MAX, EMPTY_CELL_VALUE, ALLOWED_CELL_VALUES, NO_CELL_SELECTED_INDEX, IS_TESTING_HIGHSCORE } from "./global-constants"
 import { range } from "./utils-common"
 import { getSudoku } from "sudoku-gen"
 
@@ -128,12 +128,14 @@ export function isAnyCellSelected(selectedCellIndex: number): boolean {
 }
 
 export function createDefaultSudokuState(
-  difficulty: Difficulty = 'easy'
+  difficulty: Difficulty = 'easy',
+  isTestingHighscore: boolean = IS_TESTING_HIGHSCORE
 ): SudokuState {
   const sudoku = getSudoku(difficulty)
+  const puzzle = isTestingHighscore ? '-' + sudoku.solution.slice(1, 81) : sudoku.puzzle
   return new SudokuState(
-    sudoku.puzzle,
-    sudoku.puzzle,
+    puzzle,
+    puzzle,
     sudoku.solution,
     sudoku.difficulty
   )

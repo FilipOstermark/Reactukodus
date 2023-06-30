@@ -9,7 +9,7 @@ import DifficultySelection from './difficultyselection/DifficultySelection'
 import NumberSelection from './numberselection/NumberSelection'
 import { ALLOWED_CELL_VALUES, ARROW_KEYS, ARROW_KEY_INDEX_MODIFIERS, NO_CELL_SELECTED_INDEX, EMPTY_CELL_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN } from '../../common/global-constants'
 import highscoreRepository from '../../data/HighscoreRepository'
-import { isAnyCellSelected, isHighlightValueChange, isLockedCell, validateSolution, wrapCellIndex } from '../../common/utils-sudoku'
+import { isAnyCellSelected, isHighlightValueChange, isLockedCell, wrapCellIndex } from '../../common/utils-sudoku'
 import { HighscoreView } from './highscore/HighScoreView'
 import NotesIcon from '../../../public/edit-box-icon.svg'
 import UndoIcon from '../../../public/undo-icon.svg'
@@ -22,6 +22,7 @@ import { addHighscoreUseCase } from '../../domain/usecase/AddHighscoreUseCase'
 import { stopwatch } from '../../domain/usecase/Stopwatch'
 import { Stopwatch } from './Stopwatch'
 import { toDisplayHHMM } from '../../common/utils-common'
+import { isSudokuSolvedUseCase } from '../../domain/usecase/IsSudokuSolvedUseCase'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -31,30 +32,37 @@ const App = () => {
   )
 
   useEffect(() => {
-    const sudokuStateSubscription = sudokuStateRepository
-      .getState$()
-      .subscribe(state => {
-        setSudokuState(state)
+    const subscriptions = [
+      sudokuStateRepository
+        .getState$()
+        .subscribe(state => {
+          setSudokuState(state)
+        }),
+      highscoreRepository
+        .getHighscore$()
+        .subscribe(highscore => {
+          setHighscore(highscore)
+        }),
+      isSudokuSolvedUseCase
+        .perform$()
+        .subscribe(isSolved => {
+          if (isSolved) {
+            addHighscoreUseCase.perform(
+              toDisplayHHMM(stopwatch.getElapsedSeconds()),
+              sudokuStateRepository.getState().difficulty
+            )
+            setIsViewingHighscore(true)
+          }
+          setIsSolved(isSolved)
+        })
+    ]
 
-        if (validateSolution(state.solution, state.puzzle)) {
-          addHighscoreUseCase.perform(
-            toDisplayHHMM(stopwatch.getElapsedSeconds()),
-            state.difficulty
-          )
-          setIsSolved(true)
-          setIsViewingHighscore(true)
-        }
-      })
-    const highscoreSubscription = highscoreRepository
-      .getHighscore$()
-      .subscribe(highscore => {
-        setHighscore(highscore)
-      })
     stopwatch.start()
 
     return () => { 
-      sudokuStateSubscription.unsubscribe() 
-      highscoreSubscription.unsubscribe()
+      subscriptions.forEach(subscription => { 
+        subscription.unsubscribe() 
+      })
       stopwatch.stop()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,12 +76,18 @@ const App = () => {
   const [isViewingHighscore, setIsViewingHighscore] = useState(false)
   const [startAnimationTrigger, setStartAnimationTrigger] = useState(0)
 
+  /*
+   * UseEffect is applied here in order to delay the sudoku update until after
+   * the animation render has started. This prevents display of the new sudoku
+   * for a split second before the pop-in animation starts.
+   * 
+   * TODO Find a better way to implement this behavior.
+   */
   useEffect(() => {
-    stopwatch.start()
     setIsNotesMode(false)
     setHighlightedCellValue(EMPTY_CELL_VALUE)
-    setIsSolved(false)
     resetSudokuStateUseCase.perform(sudoku.difficulty)
+    stopwatch.start()
   }, [startAnimationTrigger])
 
   function resetGame(difficulty: Difficulty) {
