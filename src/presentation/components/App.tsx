@@ -11,16 +11,16 @@ import { ALLOWED_CELL_VALUES, ARROW_KEYS, ARROW_KEY_INDEX_MODIFIERS, NO_CELL_SEL
 import highscoreRepository from '../../data/HighscoreRepository'
 import { isAnyCellSelected, isHighlightValueChange, isLockedCell, wrapCellIndex } from '../../common/utils-sudoku'
 import { HighscoreView } from './highscore/HighScoreView'
-import NotesIcon from '../../../public/edit-box-icon.svg'
-import UndoIcon from '../../../public/undo-icon.svg'
-import HighscoreIcon from '../../../public/highscore-icon.svg'
+import NotesIcon from '../assets/edit-box-icon.svg'
+import UndoIcon from '../assets/undo-icon.svg'
+import HighscoreIcon from '../assets/highscore-icon.svg'
 import { sudokuStateRepository } from '../../data/SudokuStateRepository'
 import { updateSudokuStateUseCase } from '../../domain/usecase/UpdateSudokuStateUseCase'
 import { resetSudokuStateUseCase } from '../../domain/usecase/ResetSudokuStateUseCase'
 import { undoSudokuStateUseCase } from '../../domain/usecase/UndoSudokuStateUseCase'
 import { addHighscoreUseCase } from '../../domain/usecase/AddHighscoreUseCase'
 import { stopwatch } from '../../domain/usecase/Stopwatch'
-import { Stopwatch } from './Stopwatch'
+import { Stopwatch } from './stopwatch/Stopwatch'
 import { toDisplayHHMM } from '../../common/utils-common'
 import { isSudokuSolvedUseCase } from '../../domain/usecase/IsSudokuSolvedUseCase'
 
@@ -47,12 +47,15 @@ const App = () => {
         .perform$()
         .subscribe(isSolved => {
           if (isSolved) {
+            stopwatch.stop()
             addHighscoreUseCase.perform(
               toDisplayHHMM(stopwatch.getElapsedSeconds()),
               sudokuStateRepository.getState().difficulty
             )
+
             setIsViewingHighscore(true)
           }
+
           setIsSolved(isSolved)
         })
     ]
@@ -87,6 +90,7 @@ const App = () => {
     setIsNotesMode(false)
     setHighlightedCellValue(EMPTY_CELL_VALUE)
     resetSudokuStateUseCase.perform(sudoku.difficulty)
+    
     stopwatch.start()
   }, [startAnimationTrigger])
 
@@ -206,9 +210,7 @@ const App = () => {
         currentDifficulty={sudokuState.difficulty} 
         resetPuzzle={resetGame} />
       {gridFactory()}
-      <Stopwatch 
-        isSolved={isSolved} 
-        stopwatch={stopwatch} />
+      <Stopwatch stopwatch={stopwatch} />
       <NumberSelection 
         selectedCellIndex={selectedCellIndex} 
         highlightedCellValue={highlightedCellValue} 

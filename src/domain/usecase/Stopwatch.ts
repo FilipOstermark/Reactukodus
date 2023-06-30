@@ -1,5 +1,7 @@
 import { BehaviorSubject, Observable, Subscription, interval } from "rxjs"
 
+const TIMER_INTERVAL_MS = 1_000
+
 export class Stopwatch {
   private interval: Observable<number>
   private intervalSubscription: Subscription | undefined
@@ -9,24 +11,22 @@ export class Stopwatch {
   constructor() {
     this.elapsedSeconds$ = new BehaviorSubject(0)
     this.isStarted = false
-    this.interval = interval(1000)
+    this.interval = interval(TIMER_INTERVAL_MS)
   }
 
   public start(): void {
     if (this.isStarted) {
-      // Restarts if already started
       this.stop()
-      this.elapsedSeconds$.next(0)
     }
 
-    this.interval = interval(1000)
+    this.elapsedSeconds$.next(0)
+    this.isStarted = true
+    this.interval = interval(TIMER_INTERVAL_MS)
     this.intervalSubscription = this.interval.subscribe(() => {
       this.elapsedSeconds$.next(
         this.elapsedSeconds$.getValue() + 1
       )
     })
-
-    this.isStarted = true
   }
 
   public stop(): void {
