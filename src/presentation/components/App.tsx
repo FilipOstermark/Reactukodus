@@ -162,14 +162,6 @@ const App = () => {
     })
   }
 
-  const highscoreComponent = (
-    <HighscoreView 
-      highscore={highscore} 
-      difficulty={sudokuState.difficulty}
-      isSolved={isSolved}
-      isViewingHighscore={isViewingHighscore} />
-  )
-
   function gridFactory() {
     const gridCells: Array<ReactNode> = sudokuState.puzzle.split('').map(
       (value: string, index: number) => {
@@ -199,7 +191,6 @@ const App = () => {
     return (
       <Grid 
         gridCells={gridCells} 
-        highscoreView={highscoreComponent} 
         isSolved={isSolved || isViewingHighscore} />
     )
   }
@@ -209,7 +200,14 @@ const App = () => {
       <DifficultySelection
         currentDifficulty={sudokuState.difficulty} 
         resetPuzzle={resetGame} />
-      {gridFactory()}
+      <div className='sudoku-grid-wrapper'>
+        {gridFactory()}
+        <HighscoreView 
+          highscore={highscore} 
+          difficulty={sudokuState.difficulty}
+          isSolved={isSolved}
+          isViewingHighscore={isViewingHighscore} />
+      </div>
       <Stopwatch stopwatch={stopwatch} />
       <NumberSelection 
         selectedCellIndex={selectedCellIndex} 
