@@ -1,4 +1,4 @@
-import { Observable, map } from "rxjs"
+import { Observable, distinctUntilChanged, map } from "rxjs"
 import { SudokuStateRepository, sudokuStateRepository } from "../../data/SudokuStateRepository"
 import { validateSolution } from "../../common/utils-sudoku"
 
@@ -16,7 +16,8 @@ export class IsSudokuSolvedUseCase {
       .pipe(
         map(state => {
           return validateSolution(state.solution, state.puzzle)
-        })
+        }),
+        distinctUntilChanged()
       )
   }
 }
