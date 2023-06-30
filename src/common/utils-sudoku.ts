@@ -129,7 +129,7 @@ export function isAnyCellSelected(selectedCellIndex: number): boolean {
 
 export function createDefaultSudokuState(
   difficulty: Difficulty = 'easy',
-  isTestingHighscore = import.meta.env.VITE_IS_TESTING_HIGHSCORE === "true"
+  isTestingHighscore = (import.meta.env.VITE_IS_TESTING_HIGHSCORE === "true")
 ): SudokuState {
   const sudoku = getSudoku(difficulty)
   const puzzle = isTestingHighscore ? '-' + sudoku.solution.slice(1, 81) : sudoku.puzzle
