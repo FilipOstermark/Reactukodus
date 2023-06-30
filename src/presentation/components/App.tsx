@@ -10,7 +10,6 @@ import NumberSelection from './numberselection/NumberSelection'
 import { ALLOWED_CELL_VALUES, ARROW_KEYS, ARROW_KEY_INDEX_MODIFIERS, NO_CELL_SELECTED_INDEX, EMPTY_CELL_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN } from '../../common/global-constants'
 import highscoreRepository from '../../data/HighscoreRepository'
 import { isAnyCellSelected, isHighlightValueChange, isLockedCell, validateSolution, wrapCellIndex } from '../../common/utils-sudoku'
-import { toDisplayTime } from '../../common/utils-common'
 import { HighscoreView } from './highscore/HighScoreView'
 import NotesIcon from '../../../public/edit-box-icon.svg'
 import UndoIcon from '../../../public/undo-icon.svg'
@@ -20,6 +19,9 @@ import { updateSudokuStateUseCase } from '../../domain/usecase/UpdateSudokuState
 import { resetSudokuStateUseCase } from '../../domain/usecase/ResetSudokuStateUseCase'
 import { undoSudokuStateUseCase } from '../../domain/usecase/UndoSudokuStateUseCase'
 import { addHighscoreUseCase } from '../../domain/usecase/AddHighscoreUseCase'
+import { stopwatch } from '../../domain/usecase/Stopwatch'
+import { Stopwatch } from './Stopwatch'
+import { toDisplayHHMM } from '../../common/utils-common'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -33,64 +35,41 @@ const App = () => {
       .getState$()
       .subscribe(state => {
         setSudokuState(state)
+
+        if (validateSolution(state.solution, state.puzzle)) {
+          addHighscoreUseCase.perform(
+            toDisplayHHMM(stopwatch.getElapsedSeconds()),
+            state.difficulty
+          )
+          setIsSolved(true)
+          setIsViewingHighscore(true)
+        }
       })
     const highscoreSubscription = highscoreRepository
       .getHighscore$()
       .subscribe(highscore => {
         setHighscore(highscore)
       })
+    stopwatch.start()
 
     return () => { 
       sudokuStateSubscription.unsubscribe() 
       highscoreSubscription.unsubscribe()
+      stopwatch.stop()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const [selectedCellIndex, setSelectedCellIndex] = useState(NO_CELL_SELECTED_INDEX)
   const [highlightedCellValue, setHighlightedCellValue] = useState(EMPTY_CELL_VALUE)
   const [isNotesMode, setIsNotesMode] = useState(false)
-  const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [highscore, setHighscore] = useState(highscoreRepository.getHighscore())
   const [isSolved, setIsSolved] = useState(false)
   const [isViewingHighscore, setIsViewingHighscore] = useState(false)
   const [startAnimationTrigger, setStartAnimationTrigger] = useState(0)
 
-  const displaySeconds = toDisplayTime(elapsedSeconds % 60)
-  const displayMinutes = toDisplayTime(Math.floor(elapsedSeconds / 60) % 60)
-  const displayStopwatch = `${displayMinutes}:${displaySeconds}`
-  const stopwatchOpacity = isSolved ? 0 : 1
-
   useEffect(() => {
-    const intervalId = setInterval(
-      () => {
-        return setElapsedSeconds(
-          prevElapsedSeconds => {
-            if (validateSolution(sudokuState.solution, sudokuState.puzzle)) {
-              return prevElapsedSeconds
-            }
-
-            return prevElapsedSeconds + 1
-          }
-        )
-      }, 
-      1_000
-    )
-
-    return () => { clearInterval(intervalId) }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [elapsedSeconds])
-
-  useEffect(() => {
-    if (validateSolution(sudokuState.solution, sudokuState.puzzle)) {
-      addHighscoreUseCase.perform(displayStopwatch, sudokuState.difficulty)
-      setIsSolved(true)
-      setIsViewingHighscore(true)
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sudokuState])
-
-  useEffect(() => {
-    setElapsedSeconds(0)
+    stopwatch.start()
     setIsNotesMode(false)
     setHighlightedCellValue(EMPTY_CELL_VALUE)
     setIsSolved(false)
@@ -213,7 +192,9 @@ const App = () => {
         currentDifficulty={sudokuState.difficulty} 
         resetPuzzle={resetGame} />
       {gridFactory()}
-      <h3 style={{opacity: stopwatchOpacity}}>{displayStopwatch}</h3>
+      <Stopwatch 
+        isSolved={isSolved} 
+        stopwatch={stopwatch} />
       <NumberSelection 
         selectedCellIndex={selectedCellIndex} 
         highlightedCellValue={highlightedCellValue} 
