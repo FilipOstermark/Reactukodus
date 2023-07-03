@@ -10,6 +10,11 @@ export class IsSudokuSolvedUseCase {
     this.sudokuStateRepository = sudokuStateRepository
   }
 
+  public perform(): boolean {
+    const state = this.sudokuStateRepository.getState()
+    return validateSolution(state.solution, state.puzzle)
+  }
+
   public perform$(): Observable<boolean> {
     return this.sudokuStateRepository
       .getState$()

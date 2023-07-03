@@ -5,7 +5,6 @@ import { HighscoreEntry } from "../../../domain/model/HighscoreEntry"
 interface HighscoreViewProps {
   highscore: Highscore,
   difficulty: Difficulty,
-  isSolved: boolean,
   isViewingHighscore: boolean
 }
 
@@ -13,7 +12,6 @@ export const HighscoreView = (
   { 
     highscore, 
     difficulty, 
-    isSolved,
     isViewingHighscore
   }: HighscoreViewProps
 ) => {
@@ -21,7 +19,6 @@ export const HighscoreView = (
     return entry.epochTimeMillis
   })
   const mostRecentEpochTime = Math.max(...epochTimes)
-  const transitionDelay = isSolved ? "1.2s" : "0s"
 
   const scoreList = highscore[difficulty].map(
     ({ score, epochTimeMillis }: HighscoreEntry, index: number) => {
@@ -42,7 +39,6 @@ export const HighscoreView = (
     <div 
       className="highscore" 
       data-is-solved={isViewingHighscore}
-      style={{transitionDelay: transitionDelay}}
     >
       <h1>Highscore</h1>
       <h2>({difficulty})</h2>

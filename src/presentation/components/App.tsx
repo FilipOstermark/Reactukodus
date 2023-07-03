@@ -10,18 +10,16 @@ import { ALLOWED_CELL_VALUES, ARROW_KEYS, ARROW_KEY_INDEX_MODIFIERS, NO_CELL_SEL
 import highscoreRepository from '../../data/HighscoreRepository'
 import { isAnyCellSelected, isHighlightValueChange, wrapCellIndex } from '../../common/utils-sudoku'
 import { HighscoreView } from './highscore/HighScoreView'
-import NotesIcon from '../assets/edit-box-icon.svg'
-import UndoIcon from '../assets/undo-icon.svg'
-import HighscoreIcon from '../assets/highscore-icon.svg'
 import { sudokuStateRepository } from '../../data/SudokuStateRepository'
 import { updateSudokuStateUseCase } from '../../domain/usecase/UpdateSudokuStateUseCase'
 import { resetSudokuStateUseCase } from '../../domain/usecase/ResetSudokuStateUseCase'
-import { undoSudokuStateUseCase } from '../../domain/usecase/UndoSudokuStateUseCase'
 import { addHighscoreUseCase } from '../../domain/usecase/AddHighscoreUseCase'
 import { stopwatch } from '../../domain/usecase/Stopwatch'
 import { Stopwatch } from './stopwatch/Stopwatch'
 import { toDisplayHHMM } from '../../common/utils-common'
 import { isSudokuSolvedUseCase } from '../../domain/usecase/IsSudokuSolvedUseCase'
+import { UtilityButtons } from './utilitybuttons/UtilityButtons'
+import { gameControlRepository } from '../../data/GameControlRepository'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -54,8 +52,26 @@ const App = () => {
 
             setIsViewingHighscore(true)
           }
-
-          setIsSolved(isSolved)
+        }),
+      gameControlRepository
+        .selectedCellIndex$()
+        .subscribe(value => {
+          setSelectedCellIndex(value)
+        }),
+      gameControlRepository
+        .highlightedCellValue$()
+        .subscribe(value => {
+          setHighlightedCellValue(value)
+        }),
+      gameControlRepository
+        .isNotesMode$()
+        .subscribe(value => {
+          setIsNotesMode(value)
+        }),
+      gameControlRepository
+        .isViewingHighscore$()
+        .subscribe(value => {
+          setIsViewingHighscore(value)
         })
     ]
 
@@ -72,10 +88,9 @@ const App = () => {
 
   const [selectedCellIndex, setSelectedCellIndex] = useState(NO_CELL_SELECTED_INDEX)
   const [highlightedCellValue, setHighlightedCellValue] = useState(EMPTY_CELL_VALUE)
-  const [isNotesMode, setIsNotesMode] = useState(false)
+  const [isNotesMode, setIsNotesMode] = useState(gameControlRepository.isNotesMode())
   const [highscore, setHighscore] = useState(highscoreRepository.getHighscore())
-  const [isSolved, setIsSolved] = useState(false)
-  const [isViewingHighscore, setIsViewingHighscore] = useState(false)
+  const [isViewingHighscore, setIsViewingHighscore] = useState(gameControlRepository.isViewingHighscore())
   const [startAnimationTrigger, setStartAnimationTrigger] = useState(0)
 
   /*
@@ -86,8 +101,8 @@ const App = () => {
    * TODO Find a better way to implement this behavior.
    */
   useEffect(() => {
-    setIsNotesMode(false)
-    setHighlightedCellValue(EMPTY_CELL_VALUE)
+    gameControlRepository.setNotesMode(false)
+    gameControlRepository.setHighlightedCellValue(EMPTY_CELL_VALUE)
     resetSudokuStateUseCase.perform(sudoku.difficulty)
     
     stopwatch.start()
@@ -98,22 +113,22 @@ const App = () => {
     setStartAnimationTrigger(prev => { return prev + 1 })
   }
 
+  // TODO Replace function with use case
   function handleHighlightValueChange(newValue: string) {
-    setHighlightedCellValue(prev => {
-      if (prev === newValue) {
-        return EMPTY_CELL_VALUE
-      } else {
-        return newValue
-      }
-    })
+    const highlightedCellValue = gameControlRepository.highlightedCellValue()
+    if (highlightedCellValue === newValue) {
+      gameControlRepository.setHighlightedCellValue(EMPTY_CELL_VALUE)
+    } else {
+      gameControlRepository.setHighlightedCellValue(newValue)
+    }    
   }
 
-
   function handleArrowKeyDown(key: string) {
-    setSelectedCellIndex(prev => {
-      const modifer: number = ARROW_KEY_INDEX_MODIFIERS.get(key) ?? 0
-      return wrapCellIndex(prev + modifer)  
-    })
+    const selectedCellIndex = gameControlRepository.selectedCellIndex()
+    const modifer: number = ARROW_KEY_INDEX_MODIFIERS.get(key) ?? 0
+    gameControlRepository.setSelectedCellIndex(
+      wrapCellIndex(selectedCellIndex + modifer)
+    )
   }
 
   function handleCellValueUpdate(value: string) {
@@ -140,31 +155,10 @@ const App = () => {
     }
   }
 
-  function handleNotesButtonClick() {
-    setIsNotesMode(prevIsNotesMode => {
-      return !prevIsNotesMode
-    })
-  }
-
-  function handleUndoButtonClick() {
-    undoSudokuStateUseCase.perform()
-  }
-
-  function handleHighscoreButtonClick() {
-    setIsViewingHighscore(prev => {
-      if (isSolved && prev) {
-        resetGame(sudokuState.difficulty)
-        return false
-      }
-
-      return !prev
-    })
-  }
-
   function updateSelectedCellIndex(currentIndex: number, clickedIndex: number) {
     const newIndex = currentIndex === clickedIndex ? NO_CELL_SELECTED_INDEX : clickedIndex
     if (highlightedCellValue == EMPTY_CELL_VALUE) {
-      setSelectedCellIndex(newIndex)
+      gameControlRepository.setSelectedCellIndex(newIndex)
     } else {
       updateSudokuStateUseCase.perform(
         clickedIndex,
@@ -181,7 +175,7 @@ const App = () => {
         resetPuzzle={resetGame} />
       <div className='sudoku-grid-wrapper'>
         <Grid 
-          isSolved={isSolved || isViewingHighscore} 
+          isSolved={isViewingHighscore} 
           sudokuState={sudokuState}
           highlightedCellValue={highlightedCellValue}
           selectedCellIndex={selectedCellIndex}
@@ -190,7 +184,6 @@ const App = () => {
         <HighscoreView 
           highscore={highscore} 
           difficulty={sudokuState.difficulty}
-          isSolved={isSolved}
           isViewingHighscore={isViewingHighscore} />
       </div>
       <Stopwatch stopwatch={stopwatch} />
@@ -199,10 +192,11 @@ const App = () => {
         highlightedCellValue={highlightedCellValue} 
         handleValueInput={(index: number, value: string) => {
           if (index < GRID_CELL_INDEX_MIN || index > GRID_CELL_INDEX_MAX) {
-            if (value === highlightedCellValue) {
-              setHighlightedCellValue(EMPTY_CELL_VALUE)
+            // TODO Replace with use case
+            if (value === gameControlRepository.highlightedCellValue()) {
+              gameControlRepository.setHighlightedCellValue(EMPTY_CELL_VALUE)
             } else {
-              setHighlightedCellValue(value)
+              gameControlRepository.setHighlightedCellValue(value)
             }
             return
           }
@@ -213,38 +207,8 @@ const App = () => {
             isNotesMode
           )
         }} />
-      <div className='utility-buttons'>
-        <IconButton
-          iconSrc={NotesIcon} 
-          onClick={handleNotesButtonClick}
-          isFilled={isNotesMode} />
-        <IconButton 
-          iconSrc={UndoIcon}
-          onClick={handleUndoButtonClick}
-          isFilled={false} />
-        <IconButton 
-          iconSrc={HighscoreIcon}
-          onClick={handleHighscoreButtonClick}
-          isFilled={isViewingHighscore} />
-      </div>
+      <UtilityButtons />
     </div>
-  )
-}
-
-interface IconButtonProps {
-  isFilled: boolean
-  iconSrc: string
-  onClick: () => void
-}
-
-const IconButton = (props: IconButtonProps) => {
-  return (
-    <button 
-      className='utility-button'
-      data-is-filled={props.isFilled}
-      onClick={props.onClick}>
-      <img className='icon' src={props.iconSrc} />
-    </button>
   )
 }
 

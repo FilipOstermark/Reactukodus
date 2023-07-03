@@ -24,6 +24,7 @@ const Grid = ({
   updateSelectedCellIndex
 }: GridProps) => {
 
+  // TODO Ensure only updated gridcells re-render
   const gridCells: Array<ReactNode> = sudokuState.puzzle.split('').map(
     (value: string, index: number) => {
       const notes = sudokuState.notes[index]
