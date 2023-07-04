@@ -1,18 +1,25 @@
 import { EMPTY_CELL_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN } from "../../common/global-constants"
 import { isStrictEqualArray } from "../../common/utils-common"
 import { clearIntersectingNotesOnInput, isLockedCell } from "../../common/utils-sudoku"
+import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
 import { SudokuStateRepository, sudokuStateRepository } from "../../data/SudokuStateRepository"
 import { SudokuState } from "../model/SudokuState"
 
 export class UpdateSudokuStateUseCase {
   private sudokuStateRepository: SudokuStateRepository
+  private gameControlRepository: GameControlRepository
 
-  constructor(sudokuStateRepository: SudokuStateRepository) {
+  constructor(
+    sudokuStateRepository: SudokuStateRepository,
+    gameControlRepository: GameControlRepository
+  ) {
     this.sudokuStateRepository = sudokuStateRepository
+    this.gameControlRepository = gameControlRepository
   }
 
-  public perform(index: number, value: string, isNotesMode: boolean) {
+  public perform(index: number, value: string) {
     const prevState = this.sudokuStateRepository.getState()
+    const isNotesMode = this.gameControlRepository.isNotesMode()
     const newState = updateSudokuState(prevState, index, value, isNotesMode)
 
     this.sudokuStateRepository.setState(newState)
@@ -84,4 +91,7 @@ function updateSudokuState(
 }
 
 export const updateSudokuStateUseCase: UpdateSudokuStateUseCase = 
-  new UpdateSudokuStateUseCase(sudokuStateRepository)
+  new UpdateSudokuStateUseCase(
+    sudokuStateRepository,
+    gameControlRepository
+  )

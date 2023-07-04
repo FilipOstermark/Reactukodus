@@ -1,28 +1,36 @@
 import { ReactNode } from "react"
 import GridLineEmphasis from "./GridLineEmphasis"
-import { SudokuState } from "../../../domain/model/SudokuState"
 import GridCell from "./GridCell"
 import { EMPTY_CELL_VALUE } from "../../../common/global-constants"
 import { isLockedCell } from "../../../common/utils-sudoku"
+import { useSubscribe } from "../../hooks/usesubscribe"
+import { gameControlRepository } from "../../../data/GameControlRepository"
+import { sudokuStateRepository } from "../../../data/SudokuStateRepository"
+import { onSelectCellUseCase } from "../../../domain/usecase/OnSelectCellUseCase"
 
 
 export interface GridProps {
-  isSolved: boolean
-  sudokuState: SudokuState
-  highlightedCellValue: string
-  selectedCellIndex: number,
-  startAnimationTrigger: number,
-  updateSelectedCellIndex: (selectedCellIndex: number, index: number) => void
+  startAnimationTrigger: number
 }
 
-const Grid = ({ 
-  isSolved, 
-  sudokuState,
-  highlightedCellValue,
-  selectedCellIndex,
-  startAnimationTrigger,
-  updateSelectedCellIndex
-}: GridProps) => {
+const Grid = ({ startAnimationTrigger }: GridProps) => {
+
+  const selectedCellIndex = useSubscribe(
+    gameControlRepository.selectedCellIndex$(),
+    gameControlRepository.selectedCellIndex()
+  )
+  const highlightedCellValue = useSubscribe(
+    gameControlRepository.highlightedCellValue$(),
+    gameControlRepository.highlightedCellValue()
+  )
+  const sudokuState = useSubscribe(
+    sudokuStateRepository.getState$(),
+    sudokuStateRepository.getState()
+  )
+  const isViewingHighscore = useSubscribe(
+    gameControlRepository.isViewingHighscore$(),
+    gameControlRepository.isViewingHighscore()
+  )
 
   // TODO Ensure only updated gridcells re-render
   const gridCells: Array<ReactNode> = sudokuState.puzzle.split('').map(
@@ -41,9 +49,9 @@ const Grid = ({
           isSelectedCell: selectedCellIndex === index,
           isLockedCell: isLockedCell(index, sudokuState.originalPuzzle),
           notes: sudokuState.notes[index],
-          isSolved: isSolved,
+          isSolved: isViewingHighscore,
           triggerPopinAnimation: startAnimationTrigger,
-          onClick: () => { updateSelectedCellIndex(selectedCellIndex, index) }
+          onClick: () => { onSelectCellUseCase.perform(index) }
         }
       )
     }
@@ -53,7 +61,7 @@ const Grid = ({
     <>
       <h1>Solved</h1>
       <div className='sudoku-grid'>{gridCells}</div>
-      <GridLineEmphasis isSolved={isSolved} />
+      <GridLineEmphasis isSolved={isViewingHighscore} />
     </>
   )
 }

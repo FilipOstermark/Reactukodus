@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Observable } from "rxjs"
 
-type OptionalVoidFunction<T> = undefined | ((value: T) => void)
+type OptionalSideEffectsFunction<T> = undefined | ((value: T) => void)
 
 /**
  * Custom React hook to effectively turn an rxjs Observable into a React state
@@ -17,7 +17,7 @@ type OptionalVoidFunction<T> = undefined | ((value: T) => void)
 export function useSubscribe<T>(
   observable: Observable<T>, 
   defaultValue: T,
-  sideEffects: OptionalVoidFunction<T> = undefined
+  sideEffects: OptionalSideEffectsFunction<T> = undefined
 ): T {
   const [stateVar, setStateVar] = useState<T>(defaultValue)
   

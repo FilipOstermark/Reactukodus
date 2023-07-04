@@ -6,7 +6,7 @@ import { Sudoku } from 'sudoku-gen/dist/types/sudoku.type'
 import Grid from './sudoku/Grid'
 import DifficultySelection from './difficultyselection/DifficultySelection'
 import NumberSelection from './numberselection/NumberSelection'
-import { ALLOWED_CELL_VALUES, ARROW_KEYS, ARROW_KEY_INDEX_MODIFIERS, NO_CELL_SELECTED_INDEX, EMPTY_CELL_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN } from '../../common/global-constants'
+import { ALLOWED_CELL_VALUES, ARROW_KEYS, ARROW_KEY_INDEX_MODIFIERS, EMPTY_CELL_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN } from '../../common/global-constants'
 import { isAnyCellSelected, isHighlightValueChange, wrapCellIndex } from '../../common/utils-sudoku'
 import { HighscoreView } from './highscore/HighScoreView'
 import { sudokuStateRepository } from '../../data/SudokuStateRepository'
@@ -40,14 +40,6 @@ const App = () => {
   const highlightedCellValue = useSubscribe(
     gameControlRepository.highlightedCellValue$(),
     gameControlRepository.highlightedCellValue()
-  )
-  const isNotesMode = useSubscribe(
-    gameControlRepository.isNotesMode$(),
-    gameControlRepository.isNotesMode()
-  )
-  const isViewingHighscore = useSubscribe(
-    gameControlRepository.isViewingHighscore$(),
-    gameControlRepository.isViewingHighscore()
   )
   const sudokuState = useSubscribe(
     sudokuStateRepository.getState$(),
@@ -108,11 +100,7 @@ const App = () => {
   }
 
   function handleCellValueUpdate(value: string) {
-    updateSudokuStateUseCase.perform(
-      selectedCellIndex,
-      value,
-      isNotesMode
-    )
+    updateSudokuStateUseCase.perform(selectedCellIndex, value)
   }
 
   function handleKeyDown({ key }: React.KeyboardEvent<HTMLDivElement>) {
@@ -131,32 +119,13 @@ const App = () => {
     }
   }
 
-  function updateSelectedCellIndex(currentIndex: number, clickedIndex: number) {
-    const newIndex = currentIndex === clickedIndex ? NO_CELL_SELECTED_INDEX : clickedIndex
-    if (highlightedCellValue == EMPTY_CELL_VALUE) {
-      gameControlRepository.setSelectedCellIndex(newIndex)
-    } else {
-      updateSudokuStateUseCase.perform(
-        clickedIndex,
-        highlightedCellValue,
-        isNotesMode
-      )
-    }
-  }
-
   return (
     <div className='app-base' tabIndex={0} onKeyDown={e => handleKeyDown(e)}>
       <DifficultySelection
         currentDifficulty={sudokuState.difficulty} 
         resetPuzzle={resetGame} />
       <div className='sudoku-grid-wrapper'>
-        <Grid 
-          isSolved={isViewingHighscore} 
-          sudokuState={sudokuState}
-          highlightedCellValue={highlightedCellValue}
-          selectedCellIndex={selectedCellIndex}
-          startAnimationTrigger={startAnimationTrigger}
-          updateSelectedCellIndex={updateSelectedCellIndex} />
+        <Grid startAnimationTrigger={startAnimationTrigger} />
         <HighscoreView />
       </div>
       <Stopwatch stopwatch={stopwatch} />
@@ -174,11 +143,7 @@ const App = () => {
             return
           }
 
-          updateSudokuStateUseCase.perform(
-            index, 
-            value, 
-            isNotesMode
-          )
+          updateSudokuStateUseCase.perform(index, value)
         }} />
       <UtilityButtons />
     </div>

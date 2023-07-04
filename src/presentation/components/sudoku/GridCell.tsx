@@ -38,7 +38,7 @@ const GridCell = (
   const [popin, setPopin] = useState(false)
   const transitionDuration = useRef<string>(getPopinAnimationDelay())
 
-  console.log("I render", index)
+  console.debug("Render cell with index:", index)
 
   useEffect(() => {
     setPopin(true)
