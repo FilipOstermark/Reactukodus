@@ -7,7 +7,6 @@ import Grid from './sudoku/Grid'
 import DifficultySelection from './difficultyselection/DifficultySelection'
 import NumberSelection from './numberselection/NumberSelection'
 import { ALLOWED_CELL_VALUES, ARROW_KEYS, ARROW_KEY_INDEX_MODIFIERS, NO_CELL_SELECTED_INDEX, EMPTY_CELL_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN } from '../../common/global-constants'
-import highscoreRepository from '../../data/HighscoreRepository'
 import { isAnyCellSelected, isHighlightValueChange, wrapCellIndex } from '../../common/utils-sudoku'
 import { HighscoreView } from './highscore/HighScoreView'
 import { sudokuStateRepository } from '../../data/SudokuStateRepository'
@@ -20,6 +19,7 @@ import { toDisplayHHMM } from '../../common/utils-common'
 import { isSudokuSolvedUseCase } from '../../domain/usecase/IsSudokuSolvedUseCase'
 import { UtilityButtons } from './utilitybuttons/UtilityButtons'
 import { gameControlRepository } from '../../data/GameControlRepository'
+import { showHighscoreUseCase } from '../../domain/usecase/ShowHighscoreUseCase'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -35,11 +35,6 @@ const App = () => {
         .subscribe(state => {
           setSudokuState(state)
         }),
-      highscoreRepository
-        .getHighscore$()
-        .subscribe(highscore => {
-          setHighscore(highscore)
-        }),
       isSudokuSolvedUseCase
         .perform$()
         .subscribe(isSolved => {
@@ -50,7 +45,7 @@ const App = () => {
               sudokuStateRepository.getState().difficulty
             )
 
-            setIsViewingHighscore(true)
+            showHighscoreUseCase.perform()
           }
         }),
       gameControlRepository
@@ -89,7 +84,6 @@ const App = () => {
   const [selectedCellIndex, setSelectedCellIndex] = useState(NO_CELL_SELECTED_INDEX)
   const [highlightedCellValue, setHighlightedCellValue] = useState(EMPTY_CELL_VALUE)
   const [isNotesMode, setIsNotesMode] = useState(gameControlRepository.isNotesMode())
-  const [highscore, setHighscore] = useState(highscoreRepository.getHighscore())
   const [isViewingHighscore, setIsViewingHighscore] = useState(gameControlRepository.isViewingHighscore())
   const [startAnimationTrigger, setStartAnimationTrigger] = useState(0)
 
@@ -181,10 +175,7 @@ const App = () => {
           selectedCellIndex={selectedCellIndex}
           startAnimationTrigger={startAnimationTrigger}
           updateSelectedCellIndex={updateSelectedCellIndex} />
-        <HighscoreView 
-          highscore={highscore} 
-          difficulty={sudokuState.difficulty}
-          isViewingHighscore={isViewingHighscore} />
+        <HighscoreView />
       </div>
       <Stopwatch stopwatch={stopwatch} />
       <NumberSelection 

@@ -1,5 +1,7 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
 import styles from "./DifficultySelection.module.css"
+import { useEffect, useState } from "react"
+import { gameControlRepository } from "../../../data/GameControlRepository"
 
 
 interface DifficultySelectionProps {
@@ -11,6 +13,22 @@ const DifficultySelection = (
   { currentDifficulty, resetPuzzle }: DifficultySelectionProps
 ) => {
 
+  const [isViewingHighscore, setIsViewingHighscore] = useState(
+    gameControlRepository.isViewingHighscore()
+  )
+
+  useEffect(() => {
+    const isViewingHighscoreSubscription = gameControlRepository
+      .isViewingHighscore$()
+      .subscribe(value => {
+        setIsViewingHighscore(value)
+      })
+
+    return () => {
+      isViewingHighscoreSubscription.unsubscribe()
+    }
+  }, [])
+
   function getStyle(difficulty: Difficulty) {
     if (currentDifficulty == difficulty) {
       return styles.selected
@@ -19,8 +37,14 @@ const DifficultySelection = (
     }
   }
 
+  const opacity = isViewingHighscore ? 0 : 1
+  const pointerEvents = isViewingHighscore ? "none" : "visible"
+
   return (
-    <div className='difficulty-selection'>
+    <div className='difficulty-selection' style={{ 
+      opacity: opacity,
+      pointerEvents: pointerEvents
+    }}>
       <div>
         <button 
           className={getStyle('easy')} 

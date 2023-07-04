@@ -1,0 +1,23 @@
+.highscore-difficulties {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem auto;
+}
+
+.highscore-difficulty {
+    font-size: large;
+    transition: all 0.25s;
+}
+
+.highscore-difficulty:hover,
+.highscore-difficulty[data-is-selected="true"] {
+    color: var(--primary-color-alt-bright);
+    background-image: var(--primary-gradient-bright);
+    background-size: 100%;
+    -webkit-background-clip: text;
+    -moz-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    -moz-text-fill-color: transparent;
+}
