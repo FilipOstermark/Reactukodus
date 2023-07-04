@@ -1,46 +1,25 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
 import { HighscoreEntry } from "../../../domain/model/HighscoreEntry"
 import styles from "./HighscoreView.module.css"
-import { useEffect, useState } from "react"
 import { showHighscoreUseCase } from "../../../domain/usecase/ShowHighscoreUseCase"
 import { gameControlRepository } from "../../../data/GameControlRepository"
 import highscoreRepository from "../../../data/HighscoreRepository"
+import { useSubscribe } from "../../hooks/usesubscribe"
 
 export const HighscoreView = () => {
 
-  const [selectedDifficulty, setSelectedDifficulty] = useState(
+  const selectedDifficulty = useSubscribe(
+    gameControlRepository.highscoreViewDifficulty$(),
     gameControlRepository.highscoreViewDifficulty()
   )
-  const [isViewingHighscore, setIsViewingHighscore] = useState(
+  const isViewingHighscore = useSubscribe(
+    gameControlRepository.isViewingHighscore$(),
     gameControlRepository.isViewingHighscore()
   )
-  const [highscore, setHighscore] = useState(
+  const highscore = useSubscribe(
+    highscoreRepository.getHighscore$(),
     highscoreRepository.getHighscore()
   )
-
-  useEffect(() => {
-    const highscoreViewDifficultySubscription = gameControlRepository
-      .highscoreViewDifficulty$()
-      .subscribe(value => {
-        setSelectedDifficulty(value)
-      })
-    const isViewingHighscoreSubscription = gameControlRepository
-      .isViewingHighscore$()
-      .subscribe(value => {
-        setIsViewingHighscore(value)
-      })
-    const highscoreSubscription = highscoreRepository
-      .getHighscore$()
-      .subscribe(value => {
-        setHighscore(value)
-      })
-    
-    return () => {
-      highscoreViewDifficultySubscription.unsubscribe()
-      isViewingHighscoreSubscription.unsubscribe()
-      highscoreSubscription.unsubscribe()
-    }
-  }, [])
 
   const epochTimes = highscore[selectedDifficulty].map(entry => {
     return entry.epochTimeMillis
