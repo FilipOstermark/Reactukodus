@@ -20,72 +20,54 @@ import { isSudokuSolvedUseCase } from '../../domain/usecase/IsSudokuSolvedUseCas
 import { UtilityButtons } from './utilitybuttons/UtilityButtons'
 import { gameControlRepository } from '../../data/GameControlRepository'
 import { showHighscoreUseCase } from '../../domain/usecase/ShowHighscoreUseCase'
+import { useSubscribe } from '../hooks/usesubscribe'
 
 let sudoku: Sudoku = getSudoku('easy')
 
 const App = () => {
-  const [sudokuState, setSudokuState] = useState(
-    sudokuStateRepository.getState()
-  )
-
   useEffect(() => {
-    const subscriptions = [
-      sudokuStateRepository
-        .getState$()
-        .subscribe(state => {
-          setSudokuState(state)
-        }),
-      isSudokuSolvedUseCase
-        .perform$()
-        .subscribe(isSolved => {
-          if (isSolved) {
-            stopwatch.stop()
-            addHighscoreUseCase.perform(
-              toDisplayHHMM(stopwatch.getElapsedSeconds()),
-              sudokuStateRepository.getState().difficulty
-            )
-
-            showHighscoreUseCase.perform()
-          }
-        }),
-      gameControlRepository
-        .selectedCellIndex$()
-        .subscribe(value => {
-          setSelectedCellIndex(value)
-        }),
-      gameControlRepository
-        .highlightedCellValue$()
-        .subscribe(value => {
-          setHighlightedCellValue(value)
-        }),
-      gameControlRepository
-        .isNotesMode$()
-        .subscribe(value => {
-          setIsNotesMode(value)
-        }),
-      gameControlRepository
-        .isViewingHighscore$()
-        .subscribe(value => {
-          setIsViewingHighscore(value)
-        })
-    ]
-
     stopwatch.start()
-
-    return () => { 
-      subscriptions.forEach(subscription => { 
-        subscription.unsubscribe() 
-      })
-      stopwatch.stop()
-    }
+    return () => { stopwatch.stop() }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const [selectedCellIndex, setSelectedCellIndex] = useState(NO_CELL_SELECTED_INDEX)
-  const [highlightedCellValue, setHighlightedCellValue] = useState(EMPTY_CELL_VALUE)
-  const [isNotesMode, setIsNotesMode] = useState(gameControlRepository.isNotesMode())
-  const [isViewingHighscore, setIsViewingHighscore] = useState(gameControlRepository.isViewingHighscore())
   const [startAnimationTrigger, setStartAnimationTrigger] = useState(0)
+
+  const selectedCellIndex = useSubscribe(
+    gameControlRepository.selectedCellIndex$(),
+    gameControlRepository.selectedCellIndex()
+  )
+  const highlightedCellValue = useSubscribe(
+    gameControlRepository.highlightedCellValue$(),
+    gameControlRepository.highlightedCellValue()
+  )
+  const isNotesMode = useSubscribe(
+    gameControlRepository.isNotesMode$(),
+    gameControlRepository.isNotesMode()
+  )
+  const isViewingHighscore = useSubscribe(
+    gameControlRepository.isViewingHighscore$(),
+    gameControlRepository.isViewingHighscore()
+  )
+  const sudokuState = useSubscribe(
+    sudokuStateRepository.getState$(),
+    sudokuStateRepository.getState()
+  )
+  useSubscribe(
+    isSudokuSolvedUseCase.perform$(),
+    false,
+    isSolved => {
+      if (isSolved) {
+        stopwatch.stop()
+        addHighscoreUseCase.perform(
+          toDisplayHHMM(stopwatch.getElapsedSeconds()),
+          sudokuStateRepository.getState().difficulty
+        )
+
+        showHighscoreUseCase.perform()
+      }
+    }
+  )
 
   /*
    * UseEffect is applied here in order to delay the sudoku update until after
