@@ -2,12 +2,12 @@ import { IconButton } from "../iconbutton/IconButton"
 import NotesIcon from '../../assets/edit-box-icon.svg'
 import UndoIcon from '../../assets/undo-icon.svg'
 import HighscoreIcon from '../../assets/highscore-icon.svg'
-import { undoSudokuStateUseCase } from "../../../domain/usecase/UndoSudokuStateUseCase"
-import { toggleNotesModeUseCase } from "../../../domain/usecase/ToggleNotesModeUseCase"
-import { isViewingHighscoreUseCase } from "../../../domain/usecase/IsViewingHighscoreUseCase"
+import { undoSudokuStateUseCase } from "../../../domain/usecase/sudoku/UndoSudokuStateUseCase"
+import { toggleNotesModeUseCase } from "../../../domain/usecase/gamecontrol/ToggleNotesModeUseCase"
+import { isViewingHighscoreUseCase } from "../../../domain/usecase/highscore/IsViewingHighscoreUseCase"
 import { useEffect, useState } from "react"
-import { isNotesModeUseCase } from "../../../domain/usecase/IsNotesModeUseCase"
-import { toggleViewingHighscoreUseCase } from "../../../domain/usecase/ToggleViewingHighscoreUseCase"
+import { isNotesModeUseCase } from "../../../domain/usecase/gamecontrol/IsNotesModeUseCase"
+import { toggleViewingHighscoreUseCase } from "../../../domain/usecase/highscore/ToggleViewingHighscoreUseCase"
 
 export const UtilityButtons = () => {
 

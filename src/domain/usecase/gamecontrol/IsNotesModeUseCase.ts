@@ -1,7 +1,7 @@
 import { Observable } from "rxjs"
-import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
-import { BaseUseCase } from "./BaseUseCase"
-import { ObservableUseCase } from "./ObservableUseCase"
+import { GameControlRepository, gameControlRepository } from "../../../data/GameControlRepository"
+import { BaseUseCase } from "../BaseUseCase"
+import { ObservableUseCase } from "../ObservableUseCase"
 
 export class IsNotesModeUseCase implements BaseUseCase, ObservableUseCase {
 

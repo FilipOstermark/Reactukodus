@@ -1,7 +1,7 @@
 import { Observable } from "rxjs"
-import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
-import { BaseUseCase } from "./BaseUseCase"
-import { ObservableUseCase } from "./ObservableUseCase"
+import { GameControlRepository, gameControlRepository } from "../../../data/GameControlRepository"
+import { BaseUseCase } from "../BaseUseCase"
+import { ObservableUseCase } from "../ObservableUseCase"
 
 class IsViewingHighscoreUseCase implements BaseUseCase, ObservableUseCase {
 

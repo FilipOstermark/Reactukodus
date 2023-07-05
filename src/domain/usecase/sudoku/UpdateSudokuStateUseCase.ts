@@ -1,10 +1,10 @@
-import { EMPTY_CELL_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN } from "../../common/global-constants"
-import { isStrictEqualArray } from "../../common/utils-common"
-import { clearIntersectingNotesOnInput, isLockedCell } from "../../common/utils-sudoku"
-import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
-import { SudokuStateRepository, sudokuStateRepository } from "../../data/SudokuStateRepository"
-import { SudokuState } from "../model/SudokuState"
-import { BaseUseCase } from "./BaseUseCase"
+import { EMPTY_CELL_VALUE, GRID_CELL_INDEX_MAX, GRID_CELL_INDEX_MIN } from "../../../common/global-constants"
+import { isStrictEqualArray } from "../../../common/utils-common"
+import { clearIntersectingNotesOnInput, isLockedCell } from "../../../common/utils-sudoku"
+import { GameControlRepository, gameControlRepository } from "../../../data/GameControlRepository"
+import { SudokuStateRepository, sudokuStateRepository } from "../../../data/SudokuStateRepository"
+import { SudokuState } from "../../model/SudokuState"
+import { BaseUseCase } from "../BaseUseCase"
 
 export class UpdateSudokuStateUseCase implements BaseUseCase {
   private sudokuStateRepository: SudokuStateRepository

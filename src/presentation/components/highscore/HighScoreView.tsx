@@ -1,7 +1,7 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
 import { HighscoreEntry } from "../../../domain/model/HighscoreEntry"
 import styles from "./HighscoreView.module.css"
-import { showHighscoreUseCase } from "../../../domain/usecase/ShowHighscoreUseCase"
+import { showHighscoreUseCase } from "../../../domain/usecase/highscore/ShowHighscoreUseCase"
 import { gameControlRepository } from "../../../data/GameControlRepository"
 import highscoreRepository from "../../../data/HighscoreRepository"
 import { useSubscribe } from "../../hooks/usesubscribe"

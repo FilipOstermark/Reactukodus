@@ -6,7 +6,7 @@ import { isLockedCell } from "../../../common/utils-sudoku"
 import { useSubscribe } from "../../hooks/usesubscribe"
 import { gameControlRepository } from "../../../data/GameControlRepository"
 import { sudokuStateRepository } from "../../../data/SudokuStateRepository"
-import { onSelectCellUseCase } from "../../../domain/usecase/OnSelectCellUseCase"
+import { onSelectCellUseCase } from "../../../domain/usecase/gamecontrol/OnSelectCellUseCase"
 
 
 export interface GridProps {

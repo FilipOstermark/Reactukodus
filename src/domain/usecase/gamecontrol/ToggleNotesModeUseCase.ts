@@ -1,5 +1,5 @@
-import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
-import { BaseUseCase } from "./BaseUseCase"
+import { GameControlRepository, gameControlRepository } from "../../../data/GameControlRepository"
+import { BaseUseCase } from "../BaseUseCase"
 
 export class ToggleNotesModeUseCase implements BaseUseCase {
 

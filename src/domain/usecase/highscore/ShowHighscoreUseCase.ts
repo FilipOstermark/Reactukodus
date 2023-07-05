@@ -1,7 +1,7 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
-import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
-import { sudokuStateRepository } from "../../data/SudokuStateRepository"
-import { BaseUseCase } from "./BaseUseCase"
+import { GameControlRepository, gameControlRepository } from "../../../data/GameControlRepository"
+import { sudokuStateRepository } from "../../../data/SudokuStateRepository"
+import { BaseUseCase } from "../BaseUseCase"
 
 export class ShowHighscoreUseCase implements BaseUseCase {
   private gameControlRepository: GameControlRepository

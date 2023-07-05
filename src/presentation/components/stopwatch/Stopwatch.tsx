@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Stopwatch as DomainStopwatch } from "../../../domain/usecase/Stopwatch"
+import { Stopwatch as DomainStopwatch } from "../../../domain/usecase/gamecontrol/Stopwatch"
 import { toDisplayHHMM } from "../../../common/utils-common"
 
 interface StopwatchProps {
