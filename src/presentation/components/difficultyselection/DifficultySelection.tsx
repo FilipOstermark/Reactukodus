@@ -8,10 +8,17 @@ interface DifficultySelectionProps {
   resetPuzzle: (difficulty: Difficulty) => void
 }
 
+function getStyle(currentDifficulty: Difficulty, difficulty: Difficulty) {
+  if (currentDifficulty == difficulty) {
+    return styles.selected
+  } else {
+    return styles.unselected
+  }
+}
+
 const DifficultySelection = (
   { resetPuzzle }: DifficultySelectionProps
 ) => {
-
   const sudokuState = useSubscribe(
     sudokuStateRepository.getState$(),
     sudokuStateRepository.getState()
@@ -20,14 +27,6 @@ const DifficultySelection = (
     isViewingHighscoreUseCase.perform$(),
     isViewingHighscoreUseCase.perform()
   )
-
-  function getStyle(difficulty: Difficulty) {
-    if (currentDifficulty == difficulty) {
-      return styles.selected
-    } else {
-      return styles.unselected
-    }
-  }
 
   const currentDifficulty = sudokuState.difficulty
   const opacity = isViewingHighscore ? 0 : 1
@@ -40,24 +39,24 @@ const DifficultySelection = (
     }}>
       <div>
         <button 
-          className={getStyle('easy')} 
+          className={getStyle(currentDifficulty, 'easy')} 
           onClick={() => resetPuzzle('easy')}>
             Easy
         </button>
         <button 
-          className={getStyle('medium')} 
+          className={getStyle(currentDifficulty, 'medium')} 
           onClick={() => resetPuzzle('medium')}>
             Medium
         </button>
       </div>
       <div>
         <button 
-          className={getStyle('hard')} 
+          className={getStyle(currentDifficulty, 'hard')} 
           onClick={() => resetPuzzle('hard')}>
             Hard
         </button>
         <button 
-          className={getStyle('expert')} 
+          className={getStyle(currentDifficulty, 'expert')} 
           onClick={() => resetPuzzle('expert')}>
             Expert
         </button>
