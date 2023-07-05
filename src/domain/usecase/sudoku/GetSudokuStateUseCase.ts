@@ -1,6 +1,6 @@
-import { SudokuStateRepository, sudokuStateRepository } from "../../data/SudokuStateRepository"
-import { BaseUseCase } from "./BaseUseCase"
-import { ObservableUseCase } from "./ObservableUseCase"
+import { SudokuStateRepository, sudokuStateRepository } from "../../../data/SudokuStateRepository"
+import { BaseUseCase } from "../BaseUseCase"
+import { ObservableUseCase } from "../ObservableUseCase"
 
 class GetSudokuStateUseCase implements BaseUseCase, ObservableUseCase {
   private sudokuStateRepository: SudokuStateRepository
