@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { getSudoku } from 'sudoku-gen'
 import { Difficulty } from 'sudoku-gen/dist/types/difficulty.type'
@@ -21,6 +21,7 @@ import { UtilityButtons } from './utilitybuttons/UtilityButtons'
 import { gameControlRepository } from '../../data/GameControlRepository'
 import { showHighscoreUseCase } from '../../domain/usecase/highscore/ShowHighscoreUseCase'
 import { useSubscribe } from '../hooks/usesubscribe'
+import { useOnKeyDown } from '../hooks/useonkeydown'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -30,6 +31,8 @@ const App = () => {
     return () => { stopwatch.stop() }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  useOnKeyDown(handleKeyDown)
 
   const [startAnimationTrigger, setStartAnimationTrigger] = useState(0)
 
@@ -99,7 +102,7 @@ const App = () => {
     )
   }
 
-  function handleKeyDown({ key }: React.KeyboardEvent<HTMLDivElement>) {
+  function handleKeyDown({ key }: KeyboardEvent) {
     const isNumeric = ALLOWED_CELL_VALUES.includes(key)
     const value = isNumeric ? key : EMPTY_CELL_VALUE
 
@@ -116,7 +119,7 @@ const App = () => {
   }
 
   return (
-    <div className='app-base' tabIndex={0} onKeyDown={e => handleKeyDown(e)}>
+    <div className='app-base' tabIndex={0}>
       <DifficultySelection
         currentDifficulty={sudokuState.difficulty} 
         resetPuzzle={resetGame} />
