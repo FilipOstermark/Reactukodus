@@ -44,10 +44,6 @@ const App = () => {
     gameControlRepository.highlightedCellValue$(),
     gameControlRepository.highlightedCellValue()
   )
-  const sudokuState = useSubscribe(
-    sudokuStateRepository.getState$(),
-    sudokuStateRepository.getState()
-  )
   useSubscribe(
     isSudokuSolvedUseCase.perform$(),
     false,
@@ -120,9 +116,7 @@ const App = () => {
 
   return (
     <div className='app-base' tabIndex={0}>
-      <DifficultySelection
-        currentDifficulty={sudokuState.difficulty} 
-        resetPuzzle={resetGame} />
+      <DifficultySelection resetPuzzle={resetGame} />
       <div className='sudoku-grid-wrapper'>
         <Grid startAnimationTrigger={startAnimationTrigger} />
         <HighscoreView />

@@ -1,33 +1,25 @@
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
 import styles from "./DifficultySelection.module.css"
-import { useEffect, useState } from "react"
-import { gameControlRepository } from "../../../data/GameControlRepository"
-
+import { useSubscribe } from "../../hooks/usesubscribe"
+import { sudokuStateRepository } from "../../../data/SudokuStateRepository"
+import { isViewingHighscoreUseCase } from "../../../domain/usecase/highscore/IsViewingHighscoreUseCase"
 
 interface DifficultySelectionProps {
-  currentDifficulty: Difficulty,
   resetPuzzle: (difficulty: Difficulty) => void
 }
 
 const DifficultySelection = (
-  { currentDifficulty, resetPuzzle }: DifficultySelectionProps
+  { resetPuzzle }: DifficultySelectionProps
 ) => {
 
-  const [isViewingHighscore, setIsViewingHighscore] = useState(
-    gameControlRepository.isViewingHighscore()
+  const sudokuState = useSubscribe(
+    sudokuStateRepository.getState$(),
+    sudokuStateRepository.getState()
   )
-
-  useEffect(() => {
-    const isViewingHighscoreSubscription = gameControlRepository
-      .isViewingHighscore$()
-      .subscribe(value => {
-        setIsViewingHighscore(value)
-      })
-
-    return () => {
-      isViewingHighscoreSubscription.unsubscribe()
-    }
-  }, [])
+  const isViewingHighscore = useSubscribe(
+    isViewingHighscoreUseCase.perform$(),
+    isViewingHighscoreUseCase.perform()
+  )
 
   function getStyle(difficulty: Difficulty) {
     if (currentDifficulty == difficulty) {
@@ -37,6 +29,7 @@ const DifficultySelection = (
     }
   }
 
+  const currentDifficulty = sudokuState.difficulty
   const opacity = isViewingHighscore ? 0 : 1
   const pointerEvents = isViewingHighscore ? "none" : "visible"
 
