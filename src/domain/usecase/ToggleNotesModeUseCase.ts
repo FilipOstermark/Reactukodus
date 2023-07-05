@@ -1,6 +1,7 @@
 import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
+import { BaseUseCase } from "./BaseUseCase"
 
-export class ToggleNotesModeUseCase {
+export class ToggleNotesModeUseCase implements BaseUseCase {
 
   private gameControlRepository: GameControlRepository
 

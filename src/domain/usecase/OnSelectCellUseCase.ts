@@ -1,8 +1,9 @@
 import { EMPTY_CELL_VALUE, NO_CELL_SELECTED_INDEX } from "../../common/global-constants"
 import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
+import { BaseUseCase } from "./BaseUseCase"
 import { UpdateSudokuStateUseCase, updateSudokuStateUseCase } from "./UpdateSudokuStateUseCase"
 
-export class OnSelectCellUseCase {
+export class OnSelectCellUseCase implements BaseUseCase {
 
   private gameControlRepository: GameControlRepository
   private updateSudokuStateUseCase: UpdateSudokuStateUseCase

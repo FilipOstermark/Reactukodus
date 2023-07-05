@@ -2,8 +2,9 @@ import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
 import { SudokuStateRepository, sudokuStateRepository } from "../../data/SudokuStateRepository"
 import { createDefaultSudokuState } from "../../common/utils-sudoku"
 import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
+import { BaseUseCase } from "./BaseUseCase"
 
-export class ResetSudokuStateUseCase {
+export class ResetSudokuStateUseCase implements BaseUseCase {
   private sudokuStateRepository: SudokuStateRepository
   private gameControlRepository: GameControlRepository
 

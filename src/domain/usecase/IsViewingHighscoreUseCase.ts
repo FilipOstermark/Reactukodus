@@ -1,7 +1,9 @@
 import { Observable } from "rxjs"
 import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
+import { BaseUseCase } from "./BaseUseCase"
+import { ObservableUseCase } from "./ObservableUseCase"
 
-class IsViewingHighscoreUseCase {
+class IsViewingHighscoreUseCase implements BaseUseCase, ObservableUseCase {
 
   private gameControlRepository: GameControlRepository
 

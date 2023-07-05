@@ -1,8 +1,10 @@
 import { Observable, distinctUntilChanged, map } from "rxjs"
 import { SudokuStateRepository, sudokuStateRepository } from "../../data/SudokuStateRepository"
 import { validateSolution } from "../../common/utils-sudoku"
+import { BaseUseCase } from "./BaseUseCase"
+import { ObservableUseCase } from "./ObservableUseCase"
 
-export class IsSudokuSolvedUseCase {
+export class IsSudokuSolvedUseCase implements BaseUseCase, ObservableUseCase {
 
   private sudokuStateRepository: SudokuStateRepository
 

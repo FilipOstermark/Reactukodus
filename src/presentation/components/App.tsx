@@ -99,10 +99,6 @@ const App = () => {
     )
   }
 
-  function handleCellValueUpdate(value: string) {
-    updateSudokuStateUseCase.perform(selectedCellIndex, value)
-  }
-
   function handleKeyDown({ key }: React.KeyboardEvent<HTMLDivElement>) {
     const isNumeric = ALLOWED_CELL_VALUES.includes(key)
     const value = isNumeric ? key : EMPTY_CELL_VALUE
@@ -115,7 +111,7 @@ const App = () => {
     ) {
       handleArrowKeyDown(key)
     } else {
-      handleCellValueUpdate(value)
+      updateSudokuStateUseCase.perform(selectedCellIndex, value)
     }
   }
 

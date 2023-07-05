@@ -4,8 +4,9 @@ import { clearIntersectingNotesOnInput, isLockedCell } from "../../common/utils-
 import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
 import { SudokuStateRepository, sudokuStateRepository } from "../../data/SudokuStateRepository"
 import { SudokuState } from "../model/SudokuState"
+import { BaseUseCase } from "./BaseUseCase"
 
-export class UpdateSudokuStateUseCase {
+export class UpdateSudokuStateUseCase implements BaseUseCase {
   private sudokuStateRepository: SudokuStateRepository
   private gameControlRepository: GameControlRepository
 

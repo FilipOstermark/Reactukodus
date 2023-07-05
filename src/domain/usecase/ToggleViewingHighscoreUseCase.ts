@@ -1,6 +1,7 @@
 import { GameControlRepository, gameControlRepository } from "../../data/GameControlRepository"
+import { BaseUseCase } from "./BaseUseCase"
 
-class ToggleViewingHighscoreUseCase {
+class ToggleViewingHighscoreUseCase implements BaseUseCase {
 
   private gameControlRepository: GameControlRepository
 

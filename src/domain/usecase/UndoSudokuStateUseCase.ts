@@ -1,6 +1,7 @@
 import { SudokuStateRepository, sudokuStateRepository } from "../../data/SudokuStateRepository"
+import { BaseUseCase } from "./BaseUseCase"
 
-export class UndoSudokuStateUseCase {
+export class UndoSudokuStateUseCase implements BaseUseCase {
   private sudokuStateRepository: SudokuStateRepository
 
   constructor(sudokuStateRepository: SudokuStateRepository) {

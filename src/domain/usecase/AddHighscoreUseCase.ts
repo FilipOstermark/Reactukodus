@@ -2,8 +2,9 @@ import highscoreRepository, { HighScoreRepository } from "../../data/HighscoreRe
 import { Highscore } from "../model/Highscore"
 import { Difficulty } from "sudoku-gen/dist/types/difficulty.type"
 import { updateHighscore } from "../model/Highscore"
+import { BaseUseCase } from "./BaseUseCase"
 
-export class AddHighscoreUseCase {
+export class AddHighscoreUseCase implements BaseUseCase {
   private highscoreRepository: HighScoreRepository
 
   constructor(highscoreRepository: HighScoreRepository) {
