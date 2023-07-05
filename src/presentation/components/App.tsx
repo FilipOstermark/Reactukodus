@@ -22,6 +22,7 @@ import { gameControlRepository } from '../../data/GameControlRepository'
 import { showHighscoreUseCase } from '../../domain/usecase/highscore/ShowHighscoreUseCase'
 import { useSubscribe } from '../hooks/usesubscribe'
 import { useOnKeyDown } from '../hooks/useonkeydown'
+import { undoSudokuStateUseCase } from '../../domain/usecase/sudoku/UndoSudokuStateUseCase'
 
 let sudoku: Sudoku = getSudoku('easy')
 
@@ -98,9 +99,16 @@ const App = () => {
     )
   }
 
-  function handleKeyDown({ key }: KeyboardEvent) {
+  function handleKeyDown(event: KeyboardEvent) {
+    const key = event.key
     const isNumeric = ALLOWED_CELL_VALUES.includes(key)
     const value = isNumeric ? key : EMPTY_CELL_VALUE
+    const isUndo = event.ctrlKey && (key === 'z')
+
+    if (isUndo) {
+      undoSudokuStateUseCase.perform()
+      return
+    }
 
     if (isHighlightValueChange(selectedCellIndex, key)) {
       handleHighlightValueChange(value)
